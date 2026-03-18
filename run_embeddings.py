@@ -15,11 +15,11 @@ Approach:
 import json
 import math
 import os
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 from google import genai
+from google.genai import types
 
 from config import BASE_DIR, CLIPS
 
@@ -66,24 +66,14 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
     return dot / (norm_a * norm_b)
 
 
-def wait_for_active(client: genai.Client, file_ref, timeout: int = 120):
-    """Poll until the uploaded file reaches ACTIVE state."""
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        f = client.files.get(name=file_ref.name)
-        if f.state.name == "ACTIVE":
-            return f
-        time.sleep(2)
-    raise TimeoutError(f"File {file_ref.name} did not become ACTIVE within {timeout}s")
-
-
 def embed_video(client: genai.Client, video_path: str) -> list[float]:
-    """Upload a video and return its embedding vector."""
-    video_file = client.files.upload(file=video_path)
-    video_file = wait_for_active(client, video_file)
+    """Read a video file and embed it as inline bytes."""
+    video_bytes = Path(video_path).read_bytes()
     result = client.models.embed_content(
         model=MODEL,
-        contents=video_file,
+        contents=types.Content(
+            parts=[types.Part.from_bytes(data=video_bytes, mime_type="video/mp4")]
+        ),
     )
     return result.embeddings[0].values
 
