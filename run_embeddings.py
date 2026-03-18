@@ -14,6 +14,7 @@ Approach:
 
 import json
 import math
+import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -97,7 +98,11 @@ def embed_text(client: genai.Client, text: str) -> list[float]:
 
 
 def main():
-    client = genai.Client()
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        print("Error: set GEMINI_API_KEY or GOOGLE_API_KEY")
+        return
+    client = genai.Client(api_key=api_key)
 
     run_id = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     out_dir = BASE_DIR / "results" / f"embeddings_{run_id}"
