@@ -1,21 +1,42 @@
 # Selected Models
 
-## 1. Gemini 3.1 Flash Lite
-- **Provider:** Google · **Type:** API · **Input:** $0.25/M tokens · **Output:** $1.50/M tokens
-- **Why:** Cheapest model with native video input. Scores 84.8% on Video-MMMU, the most relevant benchmark. A 30-second clip costs < $0.001.
+Run 2 lineup (2026-09). Prices are per million tokens.
 
-## 2. Gemini 3 Flash
-- **Provider:** Google · **Type:** API · **Input:** $0.50/M tokens · **Output:** $3.00/M tokens
-- **Why:** Same family as Flash Lite but slightly more capable (79% MMMU Pro). Lets us A/B test whether the 2× price bump within Gemini's own lineup improves lip-reading ability.
+## Native video input
 
-## 3. Qwen VL Max
-- **Provider:** Alibaba · **Type:** API · **Input:** $0.80/M tokens · **Output:** $3.20/M tokens
-- **Why:** Non-Google API model with native video support. Adds diversity to the model family mix and represents a mid-range price point.
+### 1. Gemini 3.7 Flash — `gemini-3.7-flash`
+- **Provider:** Google · **Input:** $0.75 · **Output:** $3.75 (introductory through 2026-12-31, then $1.50 / $7.50)
+- **Why:** Current Flash-tier workhorse, released 2026-08-13. Takes text, image, audio, video and PDF with a 1M-token context. Replaces the `gemini-3-flash-preview` used in Run 1.
 
-## 4. MiniCPM-o 4.5
-- **Provider:** OpenBMB · **Type:** Self-hosted (9B params) · **Cost:** Free (needs ~24GB VRAM)
-- **Why:** The dark horse. Samples at 10 fps — 10× more visual data than Gemini's 1 fps. If any model can catch fast mouth movements (10-15 visemes/sec in speech), it's this one. Also supports full-duplex live video streaming.
+### 2. Gemini 3.1 Pro — `gemini-3.1-pro`
+- **Provider:** Google · **Input:** $2.00 · **Output:** $12.00
+- **Why:** Still the Pro tier six months on (GA since 2026-02-19). Was the best of the Run 1 group at WER 0.95, so it is the direct point of comparison.
 
-## 5. GPT-4o mini
-- **Provider:** OpenAI · **Type:** API · **Input:** $0.15/M tokens · **Output:** $0.60/M tokens
-- **Why:** Doesn't support native video — we extract frames and send as an image sequence. This is actually useful because we control the frame rate ourselves (can try 5fps, 10fps, etc.), giving an interesting comparison against native video models.
+## Frame sequence (no video input)
+
+### 3. Claude Opus 5 — `claude-opus-5`
+- **Provider:** Anthropic · **Input:** $5.00 · **Output:** $25.00
+- **Why:** Not in Run 1 at all. No native video, so frames go in as images and we set the frame rate ourselves — the cleanest test of the "1fps sampling is the bottleneck" hypothesis. Rejects `temperature`; thinking is on by default.
+
+### 4. GPT-6 Astra — `gpt-6-astra`
+- **Provider:** OpenAI · **Input:** $10.00 · **Output:** $50.00
+- **Why:** OpenAI's frontier model, lab-proclaimed AGI. Also image-only — OpenAI has no native video input — so it runs on the same frame sequence as Claude, which makes the two directly comparable. Rejects `temperature` and `top_p`; takes `reasoning.effort` up to `max`.
+
+## Also configured (not run by default)
+
+- **Claude Fable 5.1** — `claude-fable-5-1`, $10 / $50. Anthropic's most capable model.
+- **Gemini 3.6 Flash** — `gemini-3.6-flash`. Previous Flash generation, for a within-family comparison.
+
+Select either with `--model "<name>"`.
+
+## Retired since Run 1 (2026-03)
+
+| Run 1 model | Status |
+|---|---|
+| `gemini-3.1-flash-lite-preview` | Shut down 2026-05-25. GA id is `gemini-3.1-flash-lite` |
+| `gemini-3-flash-preview` | Superseded by 3.5 / 3.6 / 3.7 Flash |
+| `gemini-3.1-pro-preview` | GA as `gemini-3.1-pro` since 2026-02-19 |
+| `gemini-embedding-2-preview` | GA as `gemini-embedding-2` since 2026-04-22 |
+
+Qwen VL Max and the self-hosted MiniCPM arm are not part of Run 2; the Colab
+notebook is left as-is.

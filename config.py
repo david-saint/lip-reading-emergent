@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
@@ -20,11 +20,17 @@ class Clip:
 class ModelConfig:
     name: str
     model_id: str
-    base_url: str
-    api_key_env: str
+    provider: str  # "gemini" | "anthropic" | "openai"
     video_mode: str  # "native_video" | "frame_sequence"
-    fps: float | None = None
-    extra_headers: dict = field(default_factory=dict)
+    api_key_env: str
+    fps: float = 10.0
+    max_frames: int = 80  # frame_sequence only; stays under per-request image caps
+    max_long_edge: int = 1024  # frame_sequence only
+    jpeg_quality: int = 80  # frame_sequence only; 80 keeps a 10fps request under ~8MB
+    media_resolution: str | None = None  # gemini only: LOW | MEDIUM | HIGH
+    effort: str | None = None  # anthropic / openai reasoning effort
+    max_output_tokens: int = 8000
+    notes: str = ""
 
 
 CLIPS = [
@@ -34,52 +40,78 @@ CLIPS = [
     Clip("clip_4", "videos/clip_4.mp4", "Did you feed the dog?", 9),
 ]
 
-OPENROUTER_BASE = "https://openrouter.ai/api/v1"
-OPENROUTER_HEADERS = {"HTTP-Referer": "https://lip-reading-experiment"}
-
 MODELS = [
     ModelConfig(
-        name="Gemini 3.1 Flash Lite",
-        model_id="google/gemini-3.1-flash-lite-preview",
-        base_url=OPENROUTER_BASE,
-        api_key_env="OPENROUTER_API_KEY",
+        name="Gemini 3.7 Flash",
+        model_id="gemini-3.7-flash",
+        provider="gemini",
         video_mode="native_video",
-        extra_headers=OPENROUTER_HEADERS,
-    ),
-    ModelConfig(
-        name="Gemini 3 Flash",
-        model_id="google/gemini-3-flash-preview",
-        base_url=OPENROUTER_BASE,
-        api_key_env="OPENROUTER_API_KEY",
-        video_mode="native_video",
-        extra_headers=OPENROUTER_HEADERS,
+        api_key_env="GEMINI_API_KEY",
+        fps=10,
+        media_resolution="HIGH",
+        notes="Native video. Released 2026-08-13, replaces the retired 3-flash-preview.",
     ),
     ModelConfig(
         name="Gemini 3.1 Pro",
-        model_id="google/gemini-3.1-pro-preview",
-        base_url=OPENROUTER_BASE,
-        api_key_env="OPENROUTER_API_KEY",
+        model_id="gemini-3.1-pro",
+        provider="gemini",
         video_mode="native_video",
-        extra_headers=OPENROUTER_HEADERS,
-    ),
-    ModelConfig(
-        name="Qwen VL Max",
-        model_id="qwen/qwen-vl-max",
-        base_url=OPENROUTER_BASE,
-        api_key_env="OPENROUTER_API_KEY",
-        video_mode="frame_sequence",
-        fps=2,
-        extra_headers=OPENROUTER_HEADERS,
-    ),
-    ModelConfig(
-        name="MiniCPM-o 4.5",
-        model_id="openbmb/MiniCPM-o-4_5",
-        base_url="http://localhost:8000/v1",
-        api_key_env="VLLM_API_KEY",
-        video_mode="frame_sequence",
+        api_key_env="GEMINI_API_KEY",
         fps=10,
+        media_resolution="HIGH",
+        notes="Native video. GA id; the 2026-03 run used the retired -preview id.",
+    ),
+    ModelConfig(
+        name="Claude Opus 5",
+        model_id="claude-opus-5",
+        provider="anthropic",
+        video_mode="frame_sequence",
+        api_key_env="ANTHROPIC_API_KEY",
+        fps=10,
+        effort="high",
+        notes="No video input — frames as images, so we control the frame rate.",
+    ),
+    ModelConfig(
+        name="GPT-6 Astra",
+        model_id="gpt-6-astra",
+        provider="openai",
+        video_mode="frame_sequence",
+        api_key_env="OPENAI_API_KEY",
+        fps=10,
+        effort="high",
+        notes="No video input — frames as images. Rejects temperature/top_p.",
     ),
 ]
+
+# Not run by default; select with --model "<name>".
+EXTRA_MODELS = [
+    ModelConfig(
+        name="Claude Fable 5.1",
+        model_id="claude-fable-5-1",
+        provider="anthropic",
+        video_mode="frame_sequence",
+        api_key_env="ANTHROPIC_API_KEY",
+        fps=10,
+        effort="high",
+        notes="Anthropic's most capable model; ~2x the price of Opus 5.",
+    ),
+    ModelConfig(
+        name="Gemini 3.6 Flash",
+        model_id="gemini-3.6-flash",
+        provider="gemini",
+        video_mode="native_video",
+        api_key_env="GEMINI_API_KEY",
+        fps=10,
+        media_resolution="HIGH",
+        notes="Previous Flash generation, for a within-family comparison.",
+    ),
+]
+
+ALL_MODELS = MODELS + EXTRA_MODELS
+
+# Reproduces the 2026-03 conditions: Gemini's 1fps default at default media
+# resolution, and sparse frame sampling for everything else.
+BASELINE_PRESET = {"fps": 1.0, "media_resolution": None, "max_frames": 24}
 
 SYSTEM_PROMPT = (
     "You are analyzing a silent video of a person speaking. "
@@ -87,3 +119,18 @@ SYSTEM_PROMPT = (
     "of the speaker's lips, face, and mouth, infer what they are saying. "
     "Respond with ONLY the words you believe were spoken, nothing else."
 )
+
+LIPREAD_PROMPT = "What is this person saying?"
+
+# Positive control: if a model cannot describe the clip, a failure to lip-read
+# says nothing about lip-reading.
+DESCRIBE_PROMPT = (
+    "Describe in detail what you see. What does the person look like, and what "
+    "are they doing? How many seconds long is the clip, and roughly how many "
+    "distinct mouth movements does the speaker make?"
+)
+
+TASKS = {
+    "lipread": (SYSTEM_PROMPT, LIPREAD_PROMPT),
+    "describe": ("You are analyzing a silent video clip.", DESCRIBE_PROMPT),
+}

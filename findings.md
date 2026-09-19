@@ -1,10 +1,12 @@
 # Findings
 
-## Summary
+## Run 1 — 2026-03
+
+### Summary
 
 No model tested was able to lip-read from silent video. All models produced responses unrelated to the actual spoken sentences, with Word Error Rates (WER) at or above 1.0 across the board. This confirms that lip-reading is not an emergent capability of current multimodal LLMs.
 
-## Models Tested
+### Models Tested
 
 | Model | Method | Avg WER | Verdict |
 |-------|--------|---------|---------|
@@ -14,7 +16,7 @@ No model tested was able to lip-read from silent video. All models produced resp
 | Qwen VL Max | OpenRouter (frame extraction) | 5.19 | Mostly refused, one verbose non-answer |
 | MiniCPM-o 4.5 (INT4) | Google Colab T4 | N/A | Refused to attempt lip-reading |
 
-## Test Clips
+### Test Clips
 
 | Clip | Ground Truth | Duration |
 |------|-------------|----------|
@@ -23,25 +25,76 @@ No model tested was able to lip-read from silent video. All models produced resp
 | clip_3 | "I'd like to take a vacation soon." | 10s |
 | clip_4 | "Did you feed the dog?" | 9s |
 
-## Key Observations
+### Key Observations
 
-### Video is being received
+#### Video is being received
 We verified that Gemini models do receive and process the video — they accurately describe the speaker ("woman with short brown hair and glasses, wearing a maroon sweatshirt") and estimate clip duration. The failure is in inferring speech from lip movements, not in video ingestion.
 
-### Response patterns
+#### Response patterns
 - **Gemini models** attempt an answer but produce unrelated phrases like "I love you", "I don't know", "I'm so excited". No response matched or even resembled the ground truth.
 - **Gemini 3 Flash** on one run entered a degenerate loop, repeating "I'm going to try to do this" until hitting the token limit.
 - **Gemini 3.1 Pro** came closest on clip_1, outputting "what is" (ground truth: "What are you doing today?") — likely coincidence rather than real lip-reading.
 - **Qwen VL Max** mostly refused, explaining that lip-reading from video is not possible. On clip_1 it hallucinated a long response ("Hello, how are you doing today?") that partially overlapped with the ground truth by chance.
 - **MiniCPM-o 4.5** explicitly refused, stating "Lip-reading from still images is not accurate enough to infer speech reliably."
 
-### Token counts
+#### Token counts
 Gemini models used ~741-950 prompt tokens per clip via the GenAI SDK, consistent across all three models. This is low but confirmed legitimate — the models are processing the video, just with efficient tokenization (~1fps sampling).
 
-### OpenRouter vs direct API
+#### OpenRouter vs direct API
 - OpenRouter worked for Gemini (native video via base64) and Qwen VL Max (frame extraction — base64 video was rejected with "No endpoints found that support base64 video input").
 - The Google GenAI SDK provided a cleaner path for Gemini models with proper file upload and processing state management.
 
-## Conclusion
+### Conclusion
 
 Current multimodal LLMs cannot lip-read. While they can see and describe people speaking in video, they cannot decode lip movements into words. This is unsurprising — lip-reading requires fine-grained temporal analysis of mouth shapes (visemes change at 10-15 per second), and these models sample video at ~1fps. Even MiniCPM-o 4.5 at 10fps refused to attempt the task. Lip-reading likely requires purpose-built models trained specifically on visual speech recognition datasets.
+
+### Caveats found when preparing Run 2
+
+Three things about Run 1 that the write-up above does not reflect:
+
+- **The clips still carry an audio track.** `videos/*.mp4` each contain an AAC
+  stream — the audio was muted, not removed with `-an`. Every frame in every
+  track is a constant 371-372 bytes, which is the signature of a constant
+  (silent) signal, so the results stand. But models with native video input
+  ingest audio, so this had to be verified rather than assumed. `run.py` now
+  probes for it before each run.
+- **The high-fps arm never ran at high fps.** MiniCPM was chosen specifically
+  because it samples at 10fps. `colab_minicpm.ipynb` sets `MAX_FRAMES = 24`
+  evenly spaced across the clip, which is ~3fps on an 8s clip. The hypothesis
+  that motivated including it was not tested.
+- **WER over refusals is not meaningful.** Qwen VL Max's 5.19 average is a
+  measure of how verbose its refusal was, not of lip-reading accuracy. Run 2
+  labels each response `attempt` / `refusal` / `empty` / `truncated` / `error`
+  and averages over attempts only.
+
+The per-clip artifacts from Run 1 were not committed (`results/` was in
+`.gitignore`), so the tables above are all that survives of it.
+
+## Run 2 — 2026-09
+
+**Status: harness ready, not yet executed.** No API keys are configured in this
+environment; the run needs `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` and
+`OPENAI_API_KEY`.
+
+### What changes
+
+| | Run 1 | Run 2 |
+|---|---|---|
+| Models | Gemini 3.1 Flash Lite / 3 Flash / 3.1 Pro (all preview ids), Qwen VL Max, MiniCPM | Gemini 3.7 Flash, Gemini 3.1 Pro, Claude Opus 5, GPT-6 Astra |
+| Frame rate | Gemini default (~1fps); frames at 2fps (Qwen) and ~3fps (MiniCPM) | 10fps default, `--sweep` for 1/5/10/30 |
+| Frame detail | provider default | `media_resolution=HIGH` (Gemini), 1024px long edge (frame arms) |
+| Video processing | n/a | `media_processing=STATIC`, so agentic segment-skipping can't quietly reduce what the model sees |
+| Output budget | 200 tokens | 8000 — every model in the lineup now spends output tokens on thinking |
+| Scoring | WER over everything | WER over attempts; refusals and truncations counted separately |
+| Controls | ad-hoc `verify_video.py` | `--task describe` positive control in the same harness |
+| Artifacts | gitignored | committed under `results/` |
+
+### The question Run 2 can answer that Run 1 could not
+
+Run 1 concluded that lip-reading fails because these models sample video at
+~1fps while visemes change at 10-15/sec. That was inference, not measurement —
+nothing in Run 1 varied the frame rate. Run 2 sets frame rate explicitly on both
+arms, so the claim is now directly testable: if the 1fps ceiling was the binding
+constraint, accuracy should improve across the sweep; if it does not, the
+bottleneck is elsewhere (most likely spatial — the mouth occupies very few
+pixels of a 1080x1920 frame, and none of the arms crop to it).
