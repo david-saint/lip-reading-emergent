@@ -5,10 +5,12 @@ Three arms:
   anthropic  frame sequence (Claude has no video input)
   openai     frame sequence (GPT-6 Astra has no video input)
 
-`--route openrouter` sends the two frame-sequence arms through OpenRouter on a
-single key instead of one key per vendor. It cannot carry the Gemini arm: the
-OpenAI-compatible chat schema has no way to express `videoMetadata.fps`,
-`media_resolution` or `media_processing`, which are the whole point of this run.
+`--route openrouter` sends the frame-sequence arms through OpenRouter on a
+single key instead of one key per vendor. It cannot carry the Gemini arm.
+OpenRouter exposes `processing: "agentic" | "static"` (Gemini's
+`media_processing`) but not `videoMetadata.fps` or `media_resolution`, and it
+drops unsupported fields silently — so a routed Gemini call would sample at the
+1fps default while the results file recorded the fps we asked for.
 """
 
 import os

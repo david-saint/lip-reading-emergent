@@ -53,10 +53,13 @@ export GEMINI_API_KEY=... OPENROUTER_API_KEY=...
 uv run run.py --route openrouter
 ```
 
-The Gemini arm always stays on the GenAI SDK. OpenRouter speaks the
-OpenAI-compatible chat schema, which has no way to express `videoMetadata.fps`,
-`media_resolution` or `media_processing=STATIC` — the controls this run exists to
-exercise. Routing Gemini through it would silently drop them.
+The Gemini arm always stays on the GenAI SDK. OpenRouter does carry one of
+Gemini's video controls — `processing: "agentic" | "static"` on the `video_url`
+part, which is `media_processing` under another name — but not `videoMetadata.fps`
+or `media_resolution`. Frame rate is the variable this run exists to vary, and
+OpenRouter drops an unsupported field rather than erroring, so a routed Gemini
+call would silently sample at the 1fps default while the results file claimed
+10fps.
 
 Two things to check before trusting an OpenRouter run: the ids in
 `config.py` (`openrouter_id`) against `https://openrouter.ai/api/v1/models`,

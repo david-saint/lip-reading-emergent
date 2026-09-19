@@ -49,7 +49,8 @@ def parse_args():
 
 def _apply_route(model, route: str):
     """OpenRouter can carry the frame-sequence arms; the Gemini arm stays direct
-    because the chat schema cannot express fps / media_resolution / STATIC."""
+    because OpenRouter cannot set fps or media_resolution (it does support
+    `processing`), and drops unsupported fields silently."""
     if route != "openrouter" or model.video_mode != "frame_sequence":
         return model
     if not model.openrouter_id:
