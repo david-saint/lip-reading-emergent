@@ -20,8 +20,8 @@ rate for those models rather than inheriting the provider's default.
 
 | Arm | Models | Frames |
 |---|---|---|
-| `native_video` | Gemini 3.7 Flash, Gemini 3.1 Pro | `fps` passed as `videoMetadata`, `media_resolution=HIGH`, `media_processing=STATIC` |
-| `frame_sequence` | Claude Opus 5, GPT-6 Astra | extracted locally at `fps`, capped at `max_frames`, long edge 1024px |
+| `native_video` | Gemini 3.8 Flash, Gemini 3.1 Pro | `fps` passed as `videoMetadata`, `media_resolution=HIGH`, `media_processing=STATIC`, thinking level `HIGH` |
+| `frame_sequence` | Claude Opus 5, Claude Fable 5.1, GPT-6 Astra | extracted locally at `fps`, capped at `max_frames`, long edge 1024px |
 
 `media_processing=STATIC` is set deliberately. Gemini's agentic video mode (added
 2026-09-01) lets the model choose which segments to look at and cuts video tokens
@@ -31,17 +31,38 @@ by up to 88% — the opposite of what lip-reading needs.
 
 ```bash
 uv sync
-export GEMINI_API_KEY=...      # Gemini arm
-export ANTHROPIC_API_KEY=...   # Claude arm
-export OPENAI_API_KEY=...      # GPT-6 Astra arm
+export GEMINI_API_KEY=...      # Gemini arm (always direct)
+export ANTHROPIC_API_KEY=...   # Claude arms, direct route
+export OPENAI_API_KEY=...      # GPT-6 Astra, direct route
 
 uv run run.py --dry-run              # show what would be sent, call nothing
-uv run run.py                        # all four models x four clips, 10fps
+uv run run.py                        # all five models x four clips, 10fps
 uv run run.py --preset baseline      # reproduce the 2026-03 conditions (1fps)
 uv run run.py --sweep 1,5,10,30      # frame-rate sweep
 uv run run.py --task describe        # positive control: can the model see the clip?
 uv run run.py --model "Claude Opus 5" --clip clip_1
 ```
+
+### One key instead of three
+
+`--route openrouter` sends the frame-sequence arms (both Claude models and
+GPT-6 Astra) through `OPENROUTER_API_KEY`:
+
+```bash
+export GEMINI_API_KEY=... OPENROUTER_API_KEY=...
+uv run run.py --route openrouter
+```
+
+The Gemini arm always stays on the GenAI SDK. OpenRouter speaks the
+OpenAI-compatible chat schema, which has no way to express `videoMetadata.fps`,
+`media_resolution` or `media_processing=STATIC` — the controls this run exists to
+exercise. Routing Gemini through it would silently drop them.
+
+Two things to check before trusting an OpenRouter run: the ids in
+`config.py` (`openrouter_id`) against `https://openrouter.ai/api/v1/models`,
+since coverage of the newest models lags their direct APIs; and request size —
+a 10fps frame arm sends roughly 8MB of base64, so lower `--fps` or
+`--max-frames` if the gateway rejects it.
 
 Each run writes `results/run_<timestamp>/` with `raw_responses.json`,
 `summary.json` and `summary.md`. Results are committed, not ignored — the 2026-03
@@ -60,15 +81,23 @@ carries a **non-silent** audio track — a model with native video input would
 transcribe the audio rather than lip-read. The four committed clips carry a
 silent (muted, not removed) AAC track, which passes.
 
+## A note on fallbacks
+
+The Claude arm deliberately does **not** enable server-side refusal fallbacks.
+A fallback would let another model answer under this model's name, which is
+fine in production and fatal to a comparison.
+
 ## Metrics
 
 WER / CER / string similarity against the ground-truth sentence, plus an outcome
-label per response: `attempt`, `refusal`, `empty`, `truncated`, or `error`.
+label per response: `attempt`, `refusal`, `empty`, `truncated`, or `error`. A
+Claude `stop_reason: "refusal"` counts as a refusal even when the content is
+empty, so a safety decline is never mistaken for a blank answer.
 Averages are taken over attempts only. A refusal is not a failed lip-reading
 attempt, and scoring one as WER 5.19 (as the 2026-03 run did) makes the average
 meaningless.
 
 Every model in the current lineup is a reasoning model whose thinking tokens
-count against the output budget, so `max_output_tokens` defaults to 8000. The
+count against the output budget, so `max_output_tokens` defaults to 16000. The
 2026-03 harness used 200, which would now truncate before any answer appeared —
 that case is detected and labelled `truncated` rather than scored as a miss.

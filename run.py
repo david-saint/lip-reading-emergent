@@ -34,10 +34,27 @@ def parse_args():
     parser.add_argument("--media-resolution", choices=["LOW", "MEDIUM", "HIGH"], help="Gemini only")
     parser.add_argument("--effort", choices=["low", "medium", "high", "xhigh", "max"])
     parser.add_argument("--preset", choices=["baseline"], help="baseline = the 2026-03 conditions")
+    parser.add_argument(
+        "--route",
+        choices=["direct", "openrouter"],
+        default="direct",
+        help="openrouter = send the frame-sequence arms through OPENROUTER_API_KEY "
+        "instead of per-vendor keys. The Gemini arm always stays direct.",
+    )
     parser.add_argument("--delay", type=float, default=1.0, help="Seconds between API calls")
     parser.add_argument("--allow-audio", action="store_true", help="Skip the silent-audio preflight")
     parser.add_argument("--dry-run", action="store_true", help="Show what would run, call nothing")
     return parser.parse_args()
+
+
+def _apply_route(model, route: str):
+    """OpenRouter can carry the frame-sequence arms; the Gemini arm stays direct
+    because the chat schema cannot express fps / media_resolution / STATIC."""
+    if route != "openrouter" or model.video_mode != "frame_sequence":
+        return model
+    if not model.openrouter_id:
+        raise SystemExit(f"{model.name} has no openrouter_id set in config.py")
+    return replace(model, provider="openrouter", api_key_env="OPENROUTER_API_KEY")
 
 
 def select_models(args) -> list:
@@ -61,6 +78,8 @@ def select_models(args) -> list:
         overrides["media_resolution"] = args.media_resolution
     if args.effort:
         overrides["effort"] = args.effort
+
+    models = [_apply_route(m, args.route) for m in models]
 
     if not overrides:
         return list(models)
@@ -192,6 +211,9 @@ def main():
     models = select_models(args)
     clips = select_clips(args)
     frame_rates = [float(f) for f in args.sweep.split(",")] if args.sweep else [None]
+
+    if args.route == "openrouter":
+        print("Route: openrouter for the frame-sequence arms; Gemini stays direct.\n")
 
     print("Preflight:")
     probes = preflight(clips, args.allow_audio)

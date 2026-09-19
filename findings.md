@@ -80,11 +80,11 @@ environment; the run needs `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` and
 
 | | Run 1 | Run 2 |
 |---|---|---|
-| Models | Gemini 3.1 Flash Lite / 3 Flash / 3.1 Pro (all preview ids), Qwen VL Max, MiniCPM | Gemini 3.7 Flash, Gemini 3.1 Pro, Claude Opus 5, GPT-6 Astra |
+| Models | Gemini 3.1 Flash Lite / 3 Flash / 3.1 Pro (all preview ids), Qwen VL Max, MiniCPM | Gemini 3.8 Flash, Gemini 3.1 Pro, Claude Opus 5, Claude Fable 5.1, GPT-6 Astra |
 | Frame rate | Gemini default (~1fps); frames at 2fps (Qwen) and ~3fps (MiniCPM) | 10fps default, `--sweep` for 1/5/10/30 |
-| Frame detail | provider default | `media_resolution=HIGH` (Gemini), 1024px long edge (frame arms) |
+| Frame detail | provider default | `media_resolution=HIGH` and thinking level `HIGH` (Gemini), 1024px long edge (frame arms) |
 | Video processing | n/a | `media_processing=STATIC`, so agentic segment-skipping can't quietly reduce what the model sees |
-| Output budget | 200 tokens | 8000 — every model in the lineup now spends output tokens on thinking |
+| Output budget | 200 tokens | 16000 — every model in the lineup now spends output tokens on thinking |
 | Scoring | WER over everything | WER over attempts; refusals and truncations counted separately |
 | Controls | ad-hoc `verify_video.py` | `--task describe` positive control in the same harness |
 | Artifacts | gitignored | committed under `results/` |

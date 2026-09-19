@@ -4,9 +4,9 @@ Run 2 lineup (2026-09). Prices are per million tokens.
 
 ## Native video input
 
-### 1. Gemini 3.7 Flash — `gemini-3.7-flash`
+### 1. Gemini 3.8 Flash — `gemini-3.8-flash`
 - **Provider:** Google · **Input:** $0.75 · **Output:** $3.75 (introductory through 2026-12-31, then $1.50 / $7.50)
-- **Why:** Current Flash-tier workhorse, released 2026-08-13. Takes text, image, audio, video and PDF with a 1M-token context. Replaces the `gemini-3-flash-preview` used in Run 1.
+- **Why:** Current Flash-tier workhorse, released 2026-09-02. Takes text, image, audio, video and PDF with a 1M-token context. Run at thinking level `HIGH`, which Google recommends for split-second movement detection — the closest thing in their guidance to what lip-reading asks for.
 
 ### 2. Gemini 3.1 Pro — `gemini-3.1-pro`
 - **Provider:** Google · **Input:** $2.00 · **Output:** $12.00
@@ -18,14 +18,21 @@ Run 2 lineup (2026-09). Prices are per million tokens.
 - **Provider:** Anthropic · **Input:** $5.00 · **Output:** $25.00
 - **Why:** Not in Run 1 at all. No native video, so frames go in as images and we set the frame rate ourselves — the cleanest test of the "1fps sampling is the bottleneck" hypothesis. Rejects `temperature`; thinking is on by default.
 
-### 4. GPT-6 Astra — `gpt-6-astra`
+### 4. Claude Fable 5.1 — `claude-fable-5-1`
+- **Provider:** Anthropic · **Input:** $10.00 · **Output:** $50.00
+- **Why:** Anthropic's most capable model, on the same frame sequence as Opus 5 — so Fable-vs-Opus isolates model capability with the visual input held constant. Thinking is always on and cannot be disabled. Two caveats: it may return `stop_reason: "refusal"` with empty content (recorded as a refusal, not an empty response), and it requires 30-day data retention — a zero-data-retention org gets a 400.
+
+### 5. GPT-6 Astra — `gpt-6-astra`
 - **Provider:** OpenAI · **Input:** $10.00 · **Output:** $50.00
 - **Why:** OpenAI's frontier model, lab-proclaimed AGI. Also image-only — OpenAI has no native video input — so it runs on the same frame sequence as Claude, which makes the two directly comparable. Rejects `temperature` and `top_p`; takes `reasoning.effort` up to `max`.
 
 ## Also configured (not run by default)
 
-- **Claude Fable 5.1** — `claude-fable-5-1`, $10 / $50. Anthropic's most capable model.
-- **Gemini 3.6 Flash** — `gemini-3.6-flash`. Previous Flash generation, for a within-family comparison.
+- **Gemini 3.7 Flash** — `gemini-3.7-flash`. Previous Flash generation (2026-08-13).
+- **Gemini 3.6 Flash** — `gemini-3.6-flash`. Two generations back.
+
+Both are there for a within-family comparison: if 3.8 Flash moves on this task
+and its predecessors do not, that is a capability change rather than noise.
 
 Select either with `--model "<name>"`.
 
@@ -34,7 +41,7 @@ Select either with `--model "<name>"`.
 | Run 1 model | Status |
 |---|---|
 | `gemini-3.1-flash-lite-preview` | Shut down 2026-05-25. GA id is `gemini-3.1-flash-lite` |
-| `gemini-3-flash-preview` | Superseded by 3.5 / 3.6 / 3.7 Flash |
+| `gemini-3-flash-preview` | Superseded by 3.5 / 3.6 / 3.7 / 3.8 Flash |
 | `gemini-3.1-pro-preview` | GA as `gemini-3.1-pro` since 2026-02-19 |
 | `gemini-embedding-2-preview` | GA as `gemini-embedding-2` since 2026-04-22 |
 

@@ -20,7 +20,7 @@ class Clip:
 class ModelConfig:
     name: str
     model_id: str
-    provider: str  # "gemini" | "anthropic" | "openai"
+    provider: str  # "gemini" | "anthropic" | "openai" | "openrouter"
     video_mode: str  # "native_video" | "frame_sequence"
     api_key_env: str
     fps: float = 10.0
@@ -28,8 +28,10 @@ class ModelConfig:
     max_long_edge: int = 1024  # frame_sequence only
     jpeg_quality: int = 80  # frame_sequence only; 80 keeps a 10fps request under ~8MB
     media_resolution: str | None = None  # gemini only: LOW | MEDIUM | HIGH
+    thinking_level: str | None = None  # gemini only: MINIMAL | LOW | MEDIUM | HIGH
     effort: str | None = None  # anthropic / openai reasoning effort
-    max_output_tokens: int = 8000
+    max_output_tokens: int = 16000
+    openrouter_id: str | None = None  # used by --route openrouter
     notes: str = ""
 
 
@@ -42,14 +44,16 @@ CLIPS = [
 
 MODELS = [
     ModelConfig(
-        name="Gemini 3.7 Flash",
-        model_id="gemini-3.7-flash",
+        name="Gemini 3.8 Flash",
+        model_id="gemini-3.8-flash",
         provider="gemini",
         video_mode="native_video",
         api_key_env="GEMINI_API_KEY",
         fps=10,
         media_resolution="HIGH",
-        notes="Native video. Released 2026-08-13, replaces the retired 3-flash-preview.",
+        thinking_level="HIGH",
+        notes="Native video, released 2026-09-02. Google recommends thinking "
+        "level HIGH for split-second movement detection.",
     ),
     ModelConfig(
         name="Gemini 3.1 Pro",
@@ -59,6 +63,7 @@ MODELS = [
         api_key_env="GEMINI_API_KEY",
         fps=10,
         media_resolution="HIGH",
+        thinking_level="HIGH",
         notes="Native video. GA id; the 2026-03 run used the retired -preview id.",
     ),
     ModelConfig(
@@ -69,7 +74,20 @@ MODELS = [
         api_key_env="ANTHROPIC_API_KEY",
         fps=10,
         effort="high",
+        openrouter_id="anthropic/claude-opus-5",
         notes="No video input — frames as images, so we control the frame rate.",
+    ),
+    ModelConfig(
+        name="Claude Fable 5.1",
+        model_id="claude-fable-5-1",
+        provider="anthropic",
+        video_mode="frame_sequence",
+        api_key_env="ANTHROPIC_API_KEY",
+        fps=10,
+        effort="high",
+        openrouter_id="anthropic/claude-fable-5-1",
+        notes="Anthropic's most capable model. Thinking is always on; may "
+        "return stop_reason=refusal. Needs 30-day data retention.",
     ),
     ModelConfig(
         name="GPT-6 Astra",
@@ -79,6 +97,7 @@ MODELS = [
         api_key_env="OPENAI_API_KEY",
         fps=10,
         effort="high",
+        openrouter_id="openai/gpt-6-astra",
         notes="No video input — frames as images. Rejects temperature/top_p.",
     ),
 ]
@@ -86,14 +105,15 @@ MODELS = [
 # Not run by default; select with --model "<name>".
 EXTRA_MODELS = [
     ModelConfig(
-        name="Claude Fable 5.1",
-        model_id="claude-fable-5-1",
-        provider="anthropic",
-        video_mode="frame_sequence",
-        api_key_env="ANTHROPIC_API_KEY",
+        name="Gemini 3.7 Flash",
+        model_id="gemini-3.7-flash",
+        provider="gemini",
+        video_mode="native_video",
+        api_key_env="GEMINI_API_KEY",
         fps=10,
-        effort="high",
-        notes="Anthropic's most capable model; ~2x the price of Opus 5.",
+        media_resolution="HIGH",
+        thinking_level="HIGH",
+        notes="Previous Flash generation (2026-08-13), for a within-family comparison.",
     ),
     ModelConfig(
         name="Gemini 3.6 Flash",
@@ -103,7 +123,8 @@ EXTRA_MODELS = [
         api_key_env="GEMINI_API_KEY",
         fps=10,
         media_resolution="HIGH",
-        notes="Previous Flash generation, for a within-family comparison.",
+        thinking_level="HIGH",
+        notes="Two Flash generations back, for a within-family comparison.",
     ),
 ]
 
@@ -134,3 +155,6 @@ TASKS = {
     "lipread": (SYSTEM_PROMPT, LIPREAD_PROMPT),
     "describe": ("You are analyzing a silent video clip.", DESCRIBE_PROMPT),
 }
+
+OPENROUTER_BASE = "https://openrouter.ai/api/v1"
+OPENROUTER_HEADERS = {"HTTP-Referer": "https://lip-reading-experiment"}

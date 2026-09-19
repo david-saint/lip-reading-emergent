@@ -32,6 +32,8 @@ def normalize(text: str) -> str:
 
 def classify(response: str | None, stop_reason: str | None = None) -> str:
     """One of: attempt | refusal | empty | truncated."""
+    if stop_reason == "refusal":  # Claude safety decline; content may be empty
+        return "refusal"
     if response is None or not response.strip():
         if stop_reason and "MAX_TOKENS" in str(stop_reason).upper():
             return "truncated"

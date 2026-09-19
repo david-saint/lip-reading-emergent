@@ -4,11 +4,16 @@ Three arms:
   gemini     native video, with explicit fps / media-resolution control
   anthropic  frame sequence (Claude has no video input)
   openai     frame sequence (GPT-6 Astra has no video input)
+
+`--route openrouter` sends the two frame-sequence arms through OpenRouter on a
+single key instead of one key per vendor. It cannot carry the Gemini arm: the
+OpenAI-compatible chat schema has no way to express `videoMetadata.fps`,
+`media_resolution` or `media_processing`, which are the whole point of this run.
 """
 
 import os
 
-from config import TASKS, ModelConfig
+from config import OPENROUTER_BASE, OPENROUTER_HEADERS, TASKS, ModelConfig
 from preprocessing import FrameSet, encode_video_base64, extract_frames
 
 
@@ -59,6 +64,13 @@ def query_gemini(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
             system_instruction=system_prompt,
             temperature=0,
             max_output_tokens=model_cfg.max_output_tokens,
+            thinking_config=(
+                types.ThinkingConfig(
+                    thinking_level=getattr(types.ThinkingLevel, model_cfg.thinking_level)
+                )
+                if model_cfg.thinking_level
+                else None
+            ),
         ),
     )
 
@@ -78,6 +90,7 @@ def query_gemini(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
             "requested_fps": model_cfg.fps,
             "media_resolution": model_cfg.media_resolution or "default",
             "media_processing": "STATIC",
+            "thinking_level": model_cfg.thinking_level or "default",
         },
     }
 
@@ -102,7 +115,9 @@ def query_anthropic(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
     if model_cfg.effort:
         kwargs["output_config"] = {"effort": model_cfg.effort}
 
-    # No temperature: current Claude models reject sampling parameters.
+    # No temperature: current Claude models reject sampling parameters. No
+    # server-side `fallbacks` either — a rescue by another model would be
+    # recorded under this model's name and corrupt the comparison.
     response = client.messages.create(
         model=model_cfg.model_id,
         max_tokens=model_cfg.max_output_tokens,
@@ -112,6 +127,11 @@ def query_anthropic(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
     )
 
     text = "".join(b.text for b in response.content if b.type == "text")
+    if response.stop_reason == "refusal":
+        details = getattr(response, "stop_details", None)
+        category = getattr(details, "category", None)
+        explanation = getattr(details, "explanation", "") or ""
+        text = text or f"[refusal: {category}] {explanation}".strip()
     usage = response.usage
     return {
         "response": text or None,
@@ -168,10 +188,63 @@ def query_openai(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
     }
 
 
+def query_openrouter(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
+    """Frame-sequence arms via OpenRouter's OpenAI-compatible chat endpoint."""
+    from openai import OpenAI
+
+    if not model_cfg.openrouter_id:
+        raise RuntimeError(f"{model_cfg.name} has no openrouter_id set in config.py")
+
+    system_prompt, question = TASKS[task]
+    client = OpenAI(
+        base_url=OPENROUTER_BASE,
+        api_key=_require_key(model_cfg),
+        default_headers=OPENROUTER_HEADERS,
+    )
+    frame_set = _frames_for(clip_path, model_cfg)
+
+    content: list[dict] = [
+        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{frame}"}}
+        for frame in frame_set.frames
+    ]
+    content.append({"type": "text", "text": question})
+
+    extra_body = {"reasoning": {"effort": model_cfg.effort}} if model_cfg.effort else {}
+
+    # No temperature: both frame-sequence models reject sampling parameters.
+    response = client.chat.completions.create(
+        model=model_cfg.openrouter_id,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": content},
+        ],
+        max_tokens=model_cfg.max_output_tokens,
+        extra_body=extra_body,
+    )
+
+    choice = response.choices[0]
+    usage = response.usage
+    return {
+        "response": choice.message.content or None,
+        "usage": {
+            "prompt_tokens": getattr(usage, "prompt_tokens", 0) if usage else 0,
+            "completion_tokens": getattr(usage, "completion_tokens", 0) if usage else 0,
+        },
+        "stop_reason": choice.finish_reason,
+        "request_meta": {
+            "video_mode": "frame_sequence",
+            "route": "openrouter",
+            "routed_model_id": model_cfg.openrouter_id,
+            **frame_set.meta,
+        },
+    }
+
+
 PROVIDERS = {
     "gemini": query_gemini,
     "anthropic": query_anthropic,
     "openai": query_openai,
+    "openrouter": query_openrouter,
 }
 
 
@@ -195,8 +268,14 @@ def describe_request(clip_path: str, model_cfg: ModelConfig) -> dict:
         }
     frame_set = _frames_for(clip_path, model_cfg)
     payload_bytes = sum(len(f) for f in frame_set.frames)
+    routed = (
+        {"route": "openrouter", "routed_model_id": model_cfg.openrouter_id}
+        if model_cfg.provider == "openrouter"
+        else {}
+    )
     return {
         **frame_set.meta,
+        **routed,
         "video_mode": "frame_sequence",
         "payload_kb": round(payload_bytes / 1024),
     }
