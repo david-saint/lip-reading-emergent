@@ -57,14 +57,15 @@ MODELS = [
     ),
     ModelConfig(
         name="Gemini 3.1 Pro",
-        model_id="gemini-3.1-pro",
+        model_id="gemini-3.1-pro-preview",
         provider="gemini",
         video_mode="native_video",
         api_key_env="GEMINI_API_KEY",
         fps=10,
         media_resolution="HIGH",
         thinking_level="HIGH",
-        notes="Native video. GA id; the 2026-03 run used the retired -preview id.",
+        notes="Native video. Same id the 2026-03 run used — no GA id exists, "
+        "so this is a true within-model control.",
     ),
     ModelConfig(
         name="Claude Opus 5",
@@ -85,7 +86,7 @@ MODELS = [
         api_key_env="ANTHROPIC_API_KEY",
         fps=10,
         effort="high",
-        openrouter_id="anthropic/claude-fable-5-1",
+        openrouter_id="anthropic/claude-fable-5.1",
         notes="Anthropic's most capable model. Thinking is always on; may "
         "return stop_reason=refusal. Needs 30-day data retention.",
     ),

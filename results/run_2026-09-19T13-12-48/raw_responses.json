@@ -1,0 +1,148 @@
+{
+  "run_id": "2026-09-19T13-12-48",
+  "task": "lipread",
+  "probes": [
+    {
+      "clip_id": "clip_1",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_1.mp4",
+      "duration_seconds": 8.0,
+      "video_fps": 30.0,
+      "frame_count": 240,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    },
+    {
+      "clip_id": "clip_2",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_2.mp4",
+      "duration_seconds": 8.0,
+      "video_fps": 30.0,
+      "frame_count": 240,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    },
+    {
+      "clip_id": "clip_3",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_3.mp4",
+      "duration_seconds": 10.0,
+      "video_fps": 30.0,
+      "frame_count": 300,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    },
+    {
+      "clip_id": "clip_4",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_4.mp4",
+      "duration_seconds": 9.0,
+      "video_fps": 30.0,
+      "frame_count": 270,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    }
+  ],
+  "results": [
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": "What do we have to do",
+      "usage": {
+        "prompt_tokens": 21382,
+        "completion_tokens": 6,
+        "thinking_tokens": 1944
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:12:48.649569+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": "I don't want to complain but I don't want to work",
+      "usage": {
+        "prompt_tokens": 21382,
+        "completion_tokens": 15,
+        "thinking_tokens": 1288
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:13:13.219005+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": "I think I just swallowed a fly",
+      "usage": {
+        "prompt_tokens": 26712,
+        "completion_tokens": 7,
+        "thinking_tokens": 1510
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:13:31.494133+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": "I'm just reflecting on",
+      "usage": {
+        "prompt_tokens": 24047,
+        "completion_tokens": 6,
+        "thinking_tokens": 1619
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:13:50.001087+00:00"
+    }
+  ]
+}

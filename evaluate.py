@@ -1,5 +1,6 @@
 import difflib
 import re
+import statistics
 
 import jiwer
 
@@ -21,6 +22,12 @@ REFUSAL_MARKERS = (
     "as an ai",
     "no audio",
 )
+
+
+def first_sentence(text: str) -> str:
+    """Several models answer correctly and then loop. Raw WER counts the loop as
+    insertions and buries the answer, so score the first sentence too."""
+    return re.split(r"(?<=[.?!])\s+", (text or "").strip())[0]
 
 
 def normalize(text: str) -> str:
@@ -69,7 +76,15 @@ def score(ground_truth: str, response: str | None, stop_reason: str | None = Non
             "cer": None,
             "semantic_similarity": None,
         }
-    return {"outcome": outcome, **compute_metrics(ground_truth, response or "")}
+    metrics = compute_metrics(ground_truth, response or "")
+    first = compute_metrics(ground_truth, first_sentence(response))
+    return {
+        "outcome": outcome,
+        "response_words": len(normalize(response or "").split()),
+        "wer_first_sentence": first["wer"],
+        "exact_match_first_sentence": first["exact_match"],
+        **metrics,
+    }
 
 
 def aggregate(scores: list[dict]) -> dict:
@@ -84,11 +99,22 @@ def aggregate(scores: list[dict]) -> dict:
         values = [s[field] for s in attempts if s.get(field) is not None]
         return sum(values) / len(values) if values else None
 
+    def med(field: str) -> float | None:
+        values = [s[field] for s in attempts if s.get(field) is not None]
+        return statistics.median(values) if values else None
+
     return {
         "n": len(scores),
         "outcomes": counts,
         "attempts": len(attempts),
         "avg_wer": avg("wer"),
+        "median_wer": med("wer"),
+        "avg_wer_first_sentence": avg("wer_first_sentence"),
+        "best_wer_first_sentence": (
+            min((s["wer_first_sentence"] for s in attempts
+                 if s.get("wer_first_sentence") is not None), default=None)
+        ),
+        "avg_response_words": avg("response_words"),
         "avg_cer": avg("cer"),
         "avg_similarity": avg("semantic_similarity"),
         "exact_matches": sum(1 for s in attempts if s.get("exact_match")),

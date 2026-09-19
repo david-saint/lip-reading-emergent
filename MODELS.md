@@ -36,14 +36,28 @@ and its predecessors do not, that is a capability change rather than noise.
 
 Select either with `--model "<name>"`.
 
-## Retired since Run 1 (2026-03)
+## Model ids, verified against the live API (2026-09-19)
 
-| Run 1 model | Status |
+Checked with `client.models.list()` on the Gemini API and OpenRouter's
+`/api/v1/models`. Both contradicted what published write-ups said, so treat the
+endpoints as authoritative and re-check before a run.
+
+| Id | Status |
 |---|---|
-| `gemini-3.1-flash-lite-preview` | Shut down 2026-05-25. GA id is `gemini-3.1-flash-lite` |
-| `gemini-3-flash-preview` | Superseded by 3.5 / 3.6 / 3.7 / 3.8 Flash |
-| `gemini-3.1-pro-preview` | GA as `gemini-3.1-pro` since 2026-02-19 |
-| `gemini-embedding-2-preview` | GA as `gemini-embedding-2` since 2026-04-22 |
+| `gemini-3.1-pro-preview` | **Live.** No `gemini-3.1-pro` GA id exists — it 404s. Run 1 used this same id |
+| `gemini-3-flash-preview` | **Live.** Superseded by 3.5-3.8 Flash, but still served |
+| `gemini-3.1-flash-lite-preview` | **Live**, alongside the GA `gemini-3.1-flash-lite` |
+| `gemini-embedding-2` | **Live.** GA; `gemini-embedding-2-preview` is also still served |
+| `anthropic/claude-fable-5.1` | OpenRouter spells it with a **dot**, not `claude-fable-5-1` |
+
+So Run 1's Gemini ids were never the blocker — they all still resolve. What did
+have to change: `media_resolution` belongs on `GenerateContentConfig`, not on the
+video `Part` (the per-Part field 400s), and the frame-sequence models reject
+`temperature`.
+
+Because `gemini-3.1-pro-preview` is the id Run 1 used and no GA replacement
+exists, the Pro arm is a clean within-model control: same model, changed
+conditions.
 
 Qwen VL Max and the self-hosted MiniCPM arm are not part of Run 2; the Colab
 notebook is left as-is.

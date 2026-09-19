@@ -169,8 +169,11 @@ def build_report(run_id: str, task: str, results: list[dict], clip_ids: list[str
     summary = {"run_id": run_id, "task": task, "scores": scored, "model_averages": averages}
 
     lines = [f"# Lip-Reading Results — {task}", "", f"Run: {run_id}", ""]
-    lines.append("| Model | " + " | ".join(clip_ids) + " | Avg WER | Attempts |")
-    lines.append("|" + "---|" * (len(clip_ids) + 3))
+    lines.append(
+        "| Model | " + " | ".join(clip_ids)
+        + " | Avg WER | 1st-sentence WER | Best | Avg words | Attempts |"
+    )
+    lines.append("|" + "---|" * (len(clip_ids) + 6))
     for name in model_names:
         row = f"| {name} "
         for clip_id in clip_ids:
@@ -180,14 +183,29 @@ def build_report(run_id: str, task: str, results: list[dict], clip_ids: list[str
             elif cell.get("outcome") != "attempt" or cell.get("wer") is None:
                 row += f"| _{cell.get('outcome')}_ "
             else:
-                row += f"| {cell['wer']:.2f} "
+                row += f"| {cell['wer_first_sentence']:.2f} "
         avg = averages[name]
-        wer = f"{avg['avg_wer']:.2f}" if avg["avg_wer"] is not None else "—"
-        row += f"| **{wer}** | {avg['attempts']}/{avg['n']} |"
+
+        def fmt(value):
+            return f"{value:.2f}" if value is not None else "—"
+
+        row += (
+            f"| {fmt(avg['avg_wer'])} | **{fmt(avg['avg_wer_first_sentence'])}** "
+            f"| {fmt(avg['best_wer_first_sentence'])} "
+            f"| {fmt(avg['avg_response_words'])} | {avg['attempts']}/{avg['n']} |"
+        )
         lines.append(row)
 
-    lines += ["", "WER is averaged over genuine attempts only; refusals, empty and", 
-              "truncated responses are counted in the Attempts column instead.", "", "## Responses", ""]
+    lines += [
+        "",
+        "Per-clip cells are first-sentence WER. Models that answer and then loop",
+        "score badly on raw WER because the repetition counts as insertions, so the",
+        "first sentence is the fairer read. WER covers genuine attempts only;",
+        "refusals, empty and truncated responses are counted under Attempts.",
+        "",
+        "## Responses",
+        "",
+    ]
     for s in scored:
         lines.append(f"**{s['model']}** + {s['clip_id']} — _{s.get('outcome')}_")
         lines.append(f"- Ground truth: {s['ground_truth']!r}")

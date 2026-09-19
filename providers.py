@@ -54,15 +54,18 @@ def query_gemini(clip_path: str, model_cfg: ModelConfig, task: str) -> dict:
         # segments, which is the opposite of what lip-reading needs.
         media_processing=types.MediaProcessing.STATIC,
     )
-    if model_cfg.media_resolution:
-        video_part.media_resolution = getattr(
-            types.MediaResolution, f"MEDIA_RESOLUTION_{model_cfg.media_resolution}"
-        )
 
     response = client.models.generate_content(
         model=model_cfg.model_id,
         contents=[types.Content(role="user", parts=[video_part, types.Part(text=question)])],
         config=types.GenerateContentConfig(
+            # media_resolution belongs on the config, not the Part: the
+            # per-Part field rejects MEDIA_RESOLUTION_HIGH with a 400.
+            media_resolution=(
+                getattr(types.MediaResolution, f"MEDIA_RESOLUTION_{model_cfg.media_resolution}")
+                if model_cfg.media_resolution
+                else None
+            ),
             system_instruction=system_prompt,
             temperature=0,
             max_output_tokens=model_cfg.max_output_tokens,
