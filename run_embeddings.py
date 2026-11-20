@@ -6,7 +6,7 @@ retrievable via text queries like "dog" for clip_4 ("Did you feed the dog?").
 
 Approach:
   1. Upload each silent video clip via the Files API.
-  2. Embed each clip with gemini-embedding-2-preview.
+  2. Embed each clip with gemini-embedding-2.
   3. Embed a set of text queries (ground-truth phrases + single keywords).
   4. Rank clips by cosine similarity for each query.
   5. Check whether the correct clip ranks first.
@@ -23,7 +23,7 @@ from google.genai import types
 
 from config import BASE_DIR, CLIPS
 
-MODEL = "gemini-embedding-2-preview"
+MODEL = "gemini-embedding-2"
 
 # Text queries: ground-truth sentences + targeted keywords
 QUERIES = [

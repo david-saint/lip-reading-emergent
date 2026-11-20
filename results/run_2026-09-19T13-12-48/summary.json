@@ -1,0 +1,151 @@
+{
+  "run_id": "2026-09-19T13-12-48",
+  "task": "lipread",
+  "scores": [
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": "What do we have to do",
+      "usage": {
+        "prompt_tokens": 21382,
+        "completion_tokens": 6,
+        "thinking_tokens": 1944
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:12:48.649569+00:00",
+      "outcome": "attempt",
+      "response_words": 6,
+      "wer_first_sentence": 1.0,
+      "exact_match_first_sentence": false,
+      "exact_match": false,
+      "wer": 1.0,
+      "cer": 0.5833333333333334,
+      "semantic_similarity": 0.4888888888888889
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": "I don't want to complain but I don't want to work",
+      "usage": {
+        "prompt_tokens": 21382,
+        "completion_tokens": 15,
+        "thinking_tokens": 1288
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:13:13.219005+00:00",
+      "outcome": "attempt",
+      "response_words": 11,
+      "wer_first_sentence": 2.2,
+      "exact_match_first_sentence": false,
+      "exact_match": false,
+      "wer": 2.2,
+      "cer": 1.4615384615384615,
+      "semantic_similarity": 0.3013698630136986
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": "I think I just swallowed a fly",
+      "usage": {
+        "prompt_tokens": 26712,
+        "completion_tokens": 7,
+        "thinking_tokens": 1510
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:13:31.494133+00:00",
+      "outcome": "attempt",
+      "response_words": 7,
+      "wer_first_sentence": 1.0,
+      "exact_match_first_sentence": false,
+      "exact_match": false,
+      "wer": 1.0,
+      "cer": 0.8064516129032258,
+      "semantic_similarity": 0.26229508196721313
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro-preview",
+      "provider": "gemini",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": "I'm just reflecting on",
+      "usage": {
+        "prompt_tokens": 24047,
+        "completion_tokens": 6,
+        "thinking_tokens": 1619
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:13:50.001087+00:00",
+      "outcome": "attempt",
+      "response_words": 4,
+      "wer_first_sentence": 1.0,
+      "exact_match_first_sentence": false,
+      "exact_match": false,
+      "wer": 1.0,
+      "cer": 0.8,
+      "semantic_similarity": 0.14634146341463414
+    }
+  ],
+  "model_averages": {
+    "Gemini 3.1 Pro": {
+      "n": 4,
+      "outcomes": {
+        "attempt": 4
+      },
+      "attempts": 4,
+      "avg_wer": 1.3,
+      "median_wer": 1.0,
+      "avg_wer_first_sentence": 1.3,
+      "best_wer_first_sentence": 1.0,
+      "avg_response_words": 7.0,
+      "avg_cer": 0.9128308519437551,
+      "avg_similarity": 0.29972382432110867,
+      "exact_matches": 0
+    }
+  }
+}

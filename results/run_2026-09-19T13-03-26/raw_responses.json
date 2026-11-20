@@ -1,0 +1,528 @@
+{
+  "run_id": "2026-09-19T13-03-26",
+  "task": "lipread",
+  "probes": [
+    {
+      "clip_id": "clip_1",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_1.mp4",
+      "duration_seconds": 8.0,
+      "video_fps": 30.0,
+      "frame_count": 240,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    },
+    {
+      "clip_id": "clip_2",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_2.mp4",
+      "duration_seconds": 8.0,
+      "video_fps": 30.0,
+      "frame_count": 240,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    },
+    {
+      "clip_id": "clip_3",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_3.mp4",
+      "duration_seconds": 10.0,
+      "video_fps": 30.0,
+      "frame_count": 300,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    },
+    {
+      "clip_id": "clip_4",
+      "path": "/Volumes/SAINT SSD/Development/clients/playground/lip-reading-emergent/videos/clip_4.mp4",
+      "duration_seconds": 9.0,
+      "video_fps": 30.0,
+      "frame_count": 270,
+      "width": 1080,
+      "height": 1920,
+      "has_audio": true,
+      "audio_looks_silent": true
+    }
+  ],
+  "results": [
+    {
+      "model": "Gemini 3.8 Flash",
+      "model_id": "gemini-3.8-flash",
+      "provider": "gemini",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": "So to all my teacher friends who are starting this week, or who are already back at school, I just wanted to say you got this.",
+      "usage": {
+        "prompt_tokens": 21382,
+        "completion_tokens": 29,
+        "thinking_tokens": 14704
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:03:26.891268+00:00"
+    },
+    {
+      "model": "Gemini 3.8 Flash",
+      "model_id": "gemini-3.8-flash",
+      "provider": "gemini",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": "I just wanted to say thank you so much for all the birthday wishes",
+      "usage": {
+        "prompt_tokens": 21382,
+        "completion_tokens": 14,
+        "thinking_tokens": 15361
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:04:13.188691+00:00"
+    },
+    {
+      "model": "Gemini 3.8 Flash",
+      "model_id": "gemini-3.8-flash",
+      "provider": "gemini",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": "Can't wait to see you",
+      "usage": {
+        "prompt_tokens": 26712,
+        "completion_tokens": 7,
+        "thinking_tokens": 15363
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:05:01.137441+00:00"
+    },
+    {
+      "model": "Gemini 3.8 Flash",
+      "model_id": "gemini-3.8-flash",
+      "provider": "gemini",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": "I get a lot of questions about the sunroom and if it gets too cold in the winter. It does get chilly in here, especially at night and in the",
+      "usage": {
+        "prompt_tokens": 24047,
+        "completion_tokens": 33,
+        "thinking_tokens": 11557
+      },
+      "stop_reason": "FinishReason.STOP",
+      "request_meta": {
+        "video_mode": "native_video",
+        "requested_fps": 10,
+        "media_resolution": "HIGH",
+        "media_processing": "STATIC",
+        "thinking_level": "HIGH"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:05:50.480916+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro",
+      "provider": "gemini",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": null,
+      "usage": null,
+      "stop_reason": null,
+      "request_meta": null,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.1-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
+      "timestamp": "2026-09-19T11:06:28.183278+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro",
+      "provider": "gemini",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": null,
+      "usage": null,
+      "stop_reason": null,
+      "request_meta": null,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.1-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
+      "timestamp": "2026-09-19T11:06:29.690053+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro",
+      "provider": "gemini",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": null,
+      "usage": null,
+      "stop_reason": null,
+      "request_meta": null,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.1-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
+      "timestamp": "2026-09-19T11:06:31.459179+00:00"
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "model_id": "gemini-3.1-pro",
+      "provider": "gemini",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": null,
+      "usage": null,
+      "stop_reason": null,
+      "request_meta": null,
+      "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.1-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
+      "timestamp": "2026-09-19T11:06:33.205657+00:00"
+    },
+    {
+      "model": "Claude Opus 5",
+      "model_id": "claude-opus-5",
+      "provider": "openrouter",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": "I don't know about you, but I'm so tired of feeling like I have to do everything myself. Like, why is it always me who has to remember? And I think a lot of women feel this way, you know? We're just exhausted. So I decided I'm done. I'm not doing it anymore. If you want something done, you can ask, or you can do it yourself. And honestly, it feels so good to finally say that out loud.",
+      "usage": {
+        "prompt_tokens": 62496,
+        "completion_tokens": 127
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-opus-5",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 10.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:06:34.717499+00:00"
+    },
+    {
+      "model": "Claude Opus 5",
+      "model_id": "claude-opus-5",
+      "provider": "openrouter",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": "So I just wanted to come on here and share something with you guys, because I've been thinking about this a lot lately. You know, I've had so many people ask me about this, and honestly, I didn't really know what to say at first. But the more I thought about it, the more I realized how important it is to just be honest about where you're at. And I think a lot of us go through this and we don't talk about it enough. So if you're feeling that way too, just know you're not alone. Anyway, let me know what you think in the comments, and I'll see you in the next one.",
+      "usage": {
+        "prompt_tokens": 62496,
+        "completion_tokens": 200
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-opus-5",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 10.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:06:54.156389+00:00"
+    },
+    {
+      "model": "Claude Opus 5",
+      "model_id": "claude-opus-5",
+      "provider": "openrouter",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": "I'm sitting here thinking about how much has changed over the past year, and honestly, I just wanted to share a few thoughts with you all. I know a lot of you have been asking me how I'm doing, and the truth is, some days are better than others. But I'm learning to take it one day at a time, and that's okay. So thank you for being here, and thank you for all your kind messages \u2014 they really do mean the world to me.",
+      "usage": {
+        "prompt_tokens": 62496,
+        "completion_tokens": 128
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-opus-5",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 8.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:07:11.434174+00:00"
+    },
+    {
+      "model": "Claude Opus 5",
+      "model_id": "claude-opus-5",
+      "provider": "openrouter",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": "I've been thinking about this a lot lately, and I just wanted to share it with you guys, because I think a lot of people are going through the same thing. You know, it's one of those things where you don't really realize how much it affects you until you actually stop and look at it. And honestly, I feel so much better now that I've said it out loud. So if you're dealing with something similar, just know that you're not alone, okay? Let me know in the comments what you think, and I'll talk to you soon.",
+      "usage": {
+        "prompt_tokens": 62496,
+        "completion_tokens": 147
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-opus-5",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 8.89,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:07:26.502157+00:00"
+    },
+    {
+      "model": "Claude Fable 5.1",
+      "model_id": "claude-fable-5-1",
+      "provider": "openrouter",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": "I don't know what you're going to do, but I think it's going to be really important that we figure it out before too long.",
+      "usage": {
+        "prompt_tokens": 62498,
+        "completion_tokens": 33
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-fable-5.1",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 10.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:07:43.396855+00:00"
+    },
+    {
+      "model": "Claude Fable 5.1",
+      "model_id": "claude-fable-5-1",
+      "provider": "openrouter",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": "I just wanted to come on here and say thank you so much for all of your kind words and support, it really means a lot to me, and I'll keep you posted on how things go.",
+      "usage": {
+        "prompt_tokens": 62498,
+        "completion_tokens": 133
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-fable-5.1",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 10.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:08:02.111018+00:00"
+    },
+    {
+      "model": "Claude Fable 5.1",
+      "model_id": "claude-fable-5-1",
+      "provider": "openrouter",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": "I can't determine what's being said from these frames alone. Lip reading from still images isn't reliable \u2014 the visual mouth shapes are ambiguous and many different sounds look identical (e.g., \"p,\" \"b,\" and \"m\"). Without audio, any transcript I gave would be a guess rather than a genuine reading.",
+      "usage": {
+        "prompt_tokens": 62498,
+        "completion_tokens": 100
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-fable-5.1",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 8.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:08:18.116217+00:00"
+    },
+    {
+      "model": "Claude Fable 5.1",
+      "model_id": "claude-fable-5-1",
+      "provider": "openrouter",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": "I can't reliably determine what's being said from these frames alone. Lip reading from still images is highly unreliable\u2014many different sounds look identical on the lips (e.g., \"p,\" \"b,\" and \"m\"), and without audio, context, or continuous motion, any transcript I produced would be a guess rather than a genuine reading. The frames show a woman speaking calmly to the camera in a conversational, vlog-style setting, with varied mouth shapes suggesting normal continuous speech, but I can't responsibly assign specific words to it.",
+      "usage": {
+        "prompt_tokens": 62498,
+        "completion_tokens": 261
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "anthropic/claude-fable-5.1",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 8.89,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:08:35.586651+00:00"
+    },
+    {
+      "model": "GPT-6 Astra",
+      "model_id": "gpt-6-astra",
+      "provider": "openrouter",
+      "clip_id": "clip_1",
+      "task": "lipread",
+      "ground_truth": "What are you doing today?",
+      "response": "So, what did you do today? What did you do today? What...",
+      "usage": {
+        "prompt_tokens": 55429,
+        "completion_tokens": 1431
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "openai/gpt-6-astra",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 10.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:08:56.764122+00:00"
+    },
+    {
+      "model": "GPT-6 Astra",
+      "model_id": "gpt-6-astra",
+      "provider": "openrouter",
+      "clip_id": "clip_2",
+      "task": "lipread",
+      "ground_truth": "It's very warm this morning.",
+      "response": "It is very warm this morning.",
+      "usage": {
+        "prompt_tokens": 55429,
+        "completion_tokens": 3333
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "openai/gpt-6-astra",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 10.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:09:36.191627+00:00"
+    },
+    {
+      "model": "GPT-6 Astra",
+      "model_id": "gpt-6-astra",
+      "provider": "openrouter",
+      "clip_id": "clip_3",
+      "task": "lipread",
+      "ground_truth": "I'd like to take a vacation soon.",
+      "response": "I like coffee too. I like coffee too.",
+      "usage": {
+        "prompt_tokens": 55429,
+        "completion_tokens": 1967
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "openai/gpt-6-astra",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 8.0,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:10:58.710926+00:00"
+    },
+    {
+      "model": "GPT-6 Astra",
+      "model_id": "gpt-6-astra",
+      "provider": "openrouter",
+      "clip_id": "clip_4",
+      "task": "lipread",
+      "ground_truth": "Did you feed the dog?",
+      "response": "Did you feed the dog? Did you feed the dog? Did you feed...",
+      "usage": {
+        "prompt_tokens": 55429,
+        "completion_tokens": 2021
+      },
+      "stop_reason": "stop",
+      "request_meta": {
+        "video_mode": "frame_sequence",
+        "route": "openrouter",
+        "routed_model_id": "openai/gpt-6-astra",
+        "n_frames": 80,
+        "requested_fps": 10,
+        "effective_fps": 8.89,
+        "frame_width": 576,
+        "frame_height": 1024,
+        "crop": "none"
+      },
+      "error": null,
+      "timestamp": "2026-09-19T11:11:51.625426+00:00"
+    }
+  ]
+}
