@@ -1166,17 +1166,18 @@
 
     milestones.forEach((m) => {
       const x = xStart + m.t * span;
-      const anchor = m.t < 0.15 ? "start" : m.t > 0.85 ? "end" : "middle";
+      const anchor = m.major ? "start" : m.t < 0.15 ? "start" : m.t > 0.85 ? "end" : "middle";
+      const textX = m.major ? x + 12 : x;
       const ty = m.above ? y - 34 : y + 38;
       const sy = m.above ? y - 19 : y + 53;
       const dy = m.above ? y - 50 : y + 23;
 
       html += `
-        <line x1="${x}" y1="${y}" x2="${x}" y2="${m.above ? y - 12 : y + 12}" stroke="${m.color}" stroke-width="1.4"/>
+        ${m.major ? "" : `<line x1="${x}" y1="${y}" x2="${x}" y2="${m.above ? y - 12 : y + 12}" stroke="${m.color}" stroke-width="1.4"/>`}
         <circle cx="${x}" cy="${y}" r="${m.major ? 6 : 4.5}" fill="${m.color}"/>
-        <text x="${x}" y="${dy}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="${m.color}">${m.date}</text>
-        <text x="${x}" y="${ty}" text-anchor="${anchor}" font-family="Space Grotesk, sans-serif" font-size="13" font-weight="700" fill="#161614">${m.title}</text>
-        <text x="${x}" y="${sy}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#727068">${m.sub}</text>
+        <text x="${textX}" y="${dy}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="${m.color}">${m.date}</text>
+        <text x="${textX}" y="${ty}" text-anchor="${anchor}" font-family="Space Grotesk, sans-serif" font-size="13" font-weight="700" fill="#161614">${m.title}</text>
+        <text x="${textX}" y="${sy}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#727068">${m.sub}</text>
       `;
     });
 
