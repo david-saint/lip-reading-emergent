@@ -1,0 +1,1947 @@
+/* ==========================================================================
+   SILENT SPEECH & VISUAL PHONETICS — Optical Phonetics Laboratory System
+   Modernist Swiss Kinematic Specimen · Zero Editorial Serifs · Zero AI Blue
+   ========================================================================== */
+
+:root {
+  /* Surfaces */
+  --bg-chalk: #F3F3EE;
+  --bg-pure: #FFFFFF;
+  --bg-stone: #EAE9E3;
+  --bg-darkroom: #161614;
+  --bg-darkroom-step: #1F1F1C;
+
+  /* Ink */
+  --ink: #161614;
+  --ink-2: #464540;
+  --ink-muted: #727068;
+  --ink-dark: #F3F3EE;
+  --ink-dark-2: #B9B7AF;
+  --ink-dark-muted: #828078;
+
+  /* Hairlines */
+  --rule: #D6D4CC;
+  --rule-strong: #161614;
+  --rule-dark: #2C2B27;
+  --rule-dark-strong: #4A4942;
+
+  /* Scientific Phonetic Signal Accents */
+  --vermilion: #D94226;
+  --vermilion-soft: rgba(217, 66, 38, 0.09);
+  --vermilion-dark: #EF5E42;
+  --viridian: #147A5E;
+  --viridian-soft: rgba(20, 122, 94, 0.09);
+  --viridian-bright: #33B38E;
+  --ochre: #B87014;
+  --ochre-soft: rgba(184, 112, 20, 0.10);
+  --ochre-bright: #E5A03D;
+  --rust: #9E3B2B;
+
+  /* Typefaces (Strictly Geometric Sans + Technical Mono — Zero Serifs) */
+  --font-display: 'Space Grotesk', 'Helvetica Neue', 'Liberation Sans', system-ui, sans-serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', 'Liberation Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', ui-monospace, monospace;
+
+  /* Layout Rhythm */
+  --max-w: 1260px;
+  --gutter: clamp(1.25rem, 4vw, 3.25rem);
+  --section-pad: clamp(5.5rem, 9.5vw, 9rem);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-chalk);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.66;
+  overflow-x: hidden;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--vermilion);
+  color: var(--bg-pure);
+}
+
+/* Container & Band Architecture */
+.wrap {
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.band {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+
+.band--chalk {
+  background: var(--bg-chalk);
+  color: var(--ink);
+}
+
+.band--pure {
+  background: var(--bg-pure);
+  color: var(--ink);
+}
+
+.band--darkroom {
+  background: var(--bg-darkroom);
+  color: var(--ink-dark);
+}
+
+/* ==========================================================================
+   Sticky Top Bar — Crisp Architectural Instrument Strip
+   ========================================================================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(243, 243, 238, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 64px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.brand__mark {
+  width: 28px;
+  height: 20px;
+  color: var(--ink);
+}
+
+.brand__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.brand__ipa {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  margin-left: 0.15rem;
+}
+
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.topnav__link {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-block: 0.35rem;
+  white-space: nowrap;
+  transition: color 0.2s var(--ease-out);
+}
+
+.topnav__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1.5px;
+  background: var(--vermilion);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-out);
+}
+
+.topnav__link:hover,
+.topnav__link.is-active {
+  color: var(--ink);
+}
+
+.topnav__link:hover::after,
+.topnav__link.is-active::after {
+  transform: scaleX(1);
+}
+
+.topbar__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--viridian);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.topbar__flatline {
+  width: 24px;
+  height: 2px;
+  background: var(--viridian);
+}
+
+/* ==========================================================================
+   Typography System — Architectural Scale & Precision Mono
+   ========================================================================== */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 0 0 1.5rem 0;
+}
+
+.band--darkroom .eyebrow {
+  color: var(--ink-dark-muted);
+}
+
+.eyebrow__num {
+  color: var(--vermilion);
+  font-weight: 600;
+}
+
+.band--darkroom .eyebrow__num {
+  color: var(--vermilion-dark);
+}
+
+.eyebrow__rule {
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.display-hero {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3.15rem, 6.4vw, 5.85rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin: 0;
+  color: var(--ink);
+}
+
+.display-hero__accent {
+  color: var(--vermilion);
+}
+
+.hero__ipa {
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.25vw, 1.05rem);
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  margin: 1.15rem 0 0 0;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 3.9vw, 3.45rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.subsection-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 1.9vw, 1.65rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.85rem 0;
+}
+
+.lead {
+  font-size: clamp(1.06rem, 1.35vw, 1.22rem);
+  line-height: 1.64;
+  color: var(--ink-2);
+  max-width: 54ch;
+  margin: 0;
+}
+
+.band--darkroom .lead {
+  color: var(--ink-dark-2);
+}
+
+.prose {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.band--darkroom .prose {
+  color: var(--ink-dark-2);
+}
+
+.prose + .prose {
+  margin-top: 1.1rem;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ipa {
+  font-family: var(--font-mono);
+  color: var(--vermilion);
+  letter-spacing: 0.02em;
+}
+
+.band--darkroom .ipa {
+  color: var(--vermilion-dark);
+}
+
+/* Section Asymmetric Header Grid */
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2rem, 5vw, 5.5rem);
+  align-items: end;
+  padding-bottom: 2.75rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: clamp(3rem, 5.5vw, 4.75rem);
+}
+
+.band--darkroom .section-head {
+  border-bottom-color: var(--rule-dark);
+}
+
+/* ==========================================================================
+   Section 0: HERO — Open Sculptural Layout + Borderless Illustration
+   ========================================================================== */
+.hero {
+  padding-top: clamp(3.5rem, 6.5vw, 5.5rem);
+  padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+.hero__copy .lead {
+  margin-top: 2rem;
+}
+
+.hero__art {
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.plate {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.plate--multiply {
+  mix-blend-mode: multiply;
+}
+
+.hero__plate-caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+}
+
+.hero__plate-caption span:last-child {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Architectural 4-Column Unboxed Telemetry Strip */
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+}
+
+.hero-stat {
+  padding: 1.75rem 1.75rem 1.75rem 0;
+  border-right: 1px solid var(--rule);
+}
+
+.hero-stat:not(:first-child) {
+  padding-left: 1.75rem;
+}
+
+.hero-stat:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.hero-stat__value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 3.6vw, 3.3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-stat__value--viridian {
+  color: var(--viridian);
+}
+
+.hero-stat__value--vermilion {
+  color: var(--vermilion);
+}
+
+.hero-stat__label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  margin-top: 0.75rem;
+}
+
+.hero-stat__sub {
+  font-size: 0.84rem;
+  color: var(--ink-muted);
+  margin-top: 0.25rem;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Hero Interactive Instrument: Live Silent Viseme Articulator
+   ========================================================================== */
+.articulator {
+  margin-top: clamp(3rem, 5.5vw, 4.5rem);
+  padding-top: 2.25rem;
+}
+
+.articulator__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem 2rem;
+  margin-bottom: 1.75rem;
+}
+
+.articulator__heading {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.clip-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.clip-tab {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.35rem 0;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  transition: color 0.2s var(--ease-out);
+}
+
+.clip-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--vermilion);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-out);
+}
+
+.clip-tab:hover,
+.clip-tab.is-active {
+  color: var(--ink);
+}
+
+.clip-tab.is-active::after {
+  transform: scaleX(1);
+}
+
+.articulator__stage {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding-block: 2.25rem;
+}
+
+.mouth-monitor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 2rem;
+  border-right: 1px solid var(--rule);
+}
+
+.mouth-monitor svg {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+}
+
+.mouth-monitor__readout {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  margin-top: 0.85rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--rule);
+}
+
+.articulator__detail {
+  min-width: 0;
+}
+
+.articulator__sentence {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  margin: 0;
+}
+
+.articulator__ipa-line {
+  font-family: var(--font-mono);
+  font-size: 0.96rem;
+  color: var(--vermilion);
+  margin: 0.6rem 0 1.4rem 0;
+  letter-spacing: 0.03em;
+}
+
+.phoneme-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.phoneme-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 46px;
+  padding: 0.42rem 0.55rem;
+  border-bottom: 2px solid var(--rule);
+}
+
+.phoneme-cell__sym {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.phoneme-cell__cls {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin-top: 0.15rem;
+}
+
+.phoneme-cell.is-current {
+  border-bottom-color: var(--vermilion);
+  background: var(--vermilion-soft);
+}
+
+.phoneme-cell.is-current .phoneme-cell__sym {
+  color: var(--vermilion);
+}
+
+.articulator__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  padding: 0.55rem 1.05rem;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  transition: background-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
+}
+
+.btn-line:hover {
+  background: var(--ink);
+  color: var(--bg-pure);
+}
+
+.btn-line--dark {
+  border-color: var(--ink-dark-2);
+  color: var(--ink-dark);
+}
+
+.btn-line--dark:hover {
+  background: var(--ink-dark);
+  color: var(--bg-darkroom);
+}
+
+.silence-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--viridian);
+}
+
+/* ==========================================================================
+   Section 01: Inflection — Interactive Metric Trap & Run 1 → Run 2 Chart
+   ========================================================================== */
+.controls-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--ink);
+}
+
+.segmented__btn {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 1.15rem;
+  color: var(--ink-2);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.segmented__btn + .segmented__btn {
+  border-left: 1px solid var(--ink);
+}
+
+.segmented__btn.is-active {
+  background: var(--ink);
+  color: var(--bg-pure);
+}
+
+.metric-note {
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  max-width: 56ch;
+}
+
+.metric-note strong {
+  color: var(--vermilion);
+  font-weight: 600;
+}
+
+.chart-stage {
+  width: 100%;
+  padding-block: 1.5rem 2rem;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.chart-stage svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Borderless Swiss Specimen Table */
+.ledger-wrap {
+  margin-top: 3.5rem;
+  overflow-x: auto;
+}
+
+.ledger-caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ledger-caption__title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.ledger-caption__meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  min-width: 720px;
+}
+
+.ledger th {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  text-align: right;
+  padding: 0.85rem 0.9rem;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.ledger th:first-child {
+  text-align: left;
+  padding-left: 0;
+}
+
+.ledger th:last-child {
+  padding-right: 0;
+}
+
+.ledger td {
+  padding: 1.05rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+
+.ledger td:first-child {
+  text-align: left;
+  padding-left: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.ledger td:last-child {
+  padding-right: 0;
+}
+
+.ledger tr.is-winner td {
+  color: var(--ink);
+  background: var(--viridian-soft);
+}
+
+.ledger tr.is-winner td:first-child {
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--viridian);
+}
+
+.ledger tr.is-winner td:last-child {
+  padding-right: 0.75rem;
+}
+
+.val-exact {
+  color: var(--viridian) !important;
+  font-weight: 700;
+}
+
+.val-near {
+  color: var(--ochre) !important;
+  font-weight: 600;
+}
+
+.val-refusal {
+  color: var(--rust) !important;
+  font-style: italic;
+}
+
+.val-muted {
+  color: var(--ink-muted) !important;
+}
+
+.ledger-subnote {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  display: block;
+  margin-top: 0.2rem;
+  font-weight: 400;
+}
+
+/* Run 1 Historical Footnote Strip (3 Open Columns) */
+.caveats-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.caveat__index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--vermilion);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+
+.caveat__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 0 0 0.55rem 0;
+  line-height: 1.3;
+}
+
+.caveat__body {
+  font-size: 0.89rem;
+  color: var(--ink-2);
+  line-height: 1.62;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Section 02: Visual Phonetics — Homophene Triad & Interactive Viseme Atlas
+   ========================================================================== */
+.plate-feature {
+  margin-block: 1rem 2.5rem;
+}
+
+.plate-feature img {
+  width: 100%;
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+.triad-key {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  max-width: 1080px;
+  margin: 1.25rem auto 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.triad-col__ipa {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.55rem;
+}
+
+.triad-col--p .triad-col__ipa { color: var(--ink); }
+.triad-col--b .triad-col__ipa { color: var(--viridian); }
+.triad-col--m .triad-col__ipa { color: var(--ochre); }
+
+.triad-col__name {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  margin-bottom: 0.45rem;
+}
+
+.triad-col__desc {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  line-height: 1.58;
+  margin: 0;
+}
+
+/* Interactive 6-Class Viseme Atlas */
+.viseme-lab {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+  margin-top: clamp(4rem, 7vw, 6rem);
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--rule-strong);
+}
+
+.viseme-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--rule);
+  margin-top: 1.75rem;
+}
+
+.viseme-btn {
+  text-align: left;
+  padding: 1.15rem 1rem 1.15rem 0;
+  border-bottom: 1px solid var(--rule);
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.viseme-btn:nth-child(even) {
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--rule);
+}
+
+.viseme-btn__ipa {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: block;
+}
+
+.viseme-btn__label {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.viseme-btn:hover .viseme-btn__ipa,
+.viseme-btn.is-active .viseme-btn__ipa {
+  color: var(--vermilion);
+}
+
+.viseme-btn.is-active {
+  border-bottom-color: var(--vermilion);
+}
+
+.viseme-stage {
+  padding-left: clamp(0rem, 2vw, 2rem);
+}
+
+.viseme-stage__canvas {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.viseme-stage__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+}
+
+.meta-datum__k {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+.meta-datum__v {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  line-height: 1.35;
+}
+
+.fable-quote {
+  margin-top: 2rem;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--rust);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  line-height: 1.62;
+}
+
+.fable-quote cite {
+  display: block;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--rust);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   Section 03: Temporal Kinematics — Frame Rate Disconfirmed
+   ========================================================================== */
+.shutter-plate-wrap {
+  margin-bottom: 3.5rem;
+}
+
+.shutter-plate-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 1rem;
+}
+
+.kinematics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+  padding-top: 3rem;
+  border-top: 1px solid var(--rule);
+}
+
+.shutter-svg-box {
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-top: 1.5rem;
+}
+
+.control-proof {
+  border-left: 1px solid var(--rule);
+  padding-left: clamp(1.5rem, 3.5vw, 3rem);
+}
+
+.control-row {
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.control-row:first-child {
+  padding-top: 0;
+}
+
+.control-row:last-child {
+  border-bottom: none;
+}
+
+.control-row__model {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-muted);
+}
+
+.control-row__delta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.control-row__arrow {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+
+.control-row__note {
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  margin-top: 0.55rem;
+  line-height: 1.58;
+}
+
+/* ==========================================================================
+   Section 04: THE SILENT DARKROOM — Forensic Alignment & All Transcripts
+   ========================================================================== */
+.darkroom-plate-wrap {
+  margin-bottom: clamp(3rem, 5vw, 4.5rem);
+}
+
+.darkroom-plate-captions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  border-top: 1px solid var(--rule-dark);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.darkroom-plate-captions__left {
+  color: var(--viridian-bright);
+}
+
+.darkroom-plate-captions__right {
+  color: var(--ochre-bright);
+  text-align: right;
+}
+
+/* Forensic Clip Selector */
+.forensic-nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--rule-dark-strong);
+  border-bottom: 1px solid var(--rule-dark);
+  margin-bottom: 3rem;
+}
+
+.forensic-tab {
+  text-align: left;
+  padding: 1.25rem 1.25rem 1.25rem 0;
+  border-right: 1px solid var(--rule-dark);
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.forensic-tab:not(:first-child) {
+  padding-left: 1.25rem;
+}
+
+.forensic-tab:last-child {
+  border-right: none;
+}
+
+.forensic-tab::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: var(--vermilion-dark);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-out);
+}
+
+.forensic-tab.is-active::before {
+  transform: scaleX(1);
+}
+
+.forensic-tab__id {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dark-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.forensic-tab__wer {
+  color: var(--viridian-bright);
+  font-weight: 600;
+}
+
+.forensic-tab__gt {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.96rem;
+  color: var(--ink-dark-2);
+  margin-top: 0.45rem;
+  line-height: 1.3;
+  transition: color 0.18s;
+}
+
+.forensic-tab:hover .forensic-tab__gt,
+.forensic-tab.is-active .forensic-tab__gt {
+  color: var(--ink-dark);
+}
+
+/* Word-by-Word Forensic Phonetic Tape */
+.alignment-stage {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--rule-dark);
+  margin-bottom: 2.5rem;
+}
+
+.alignment-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.alignment-gt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--ink-dark);
+  margin: 0;
+}
+
+.alignment-ipa {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--vermilion-dark);
+  margin-top: 0.5rem;
+}
+
+.alignment-verdict {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--viridian-bright);
+  text-align: right;
+}
+
+.alignment-verdict span {
+  display: block;
+  color: var(--ink-dark-muted);
+  font-size: 0.72rem;
+  margin-top: 0.25rem;
+}
+
+.alignment-svg-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding-block: 0.5rem;
+}
+
+.alignment-note {
+  font-size: 0.94rem;
+  color: var(--ink-dark-2);
+  max-width: 72ch;
+  margin-top: 1.25rem;
+  line-height: 1.65;
+}
+
+/* All-Model Transcript Rows on Darkroom Carbon (Zero Boxes) */
+.transcript-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.transcript-row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 210px;
+  gap: 2rem;
+  align-items: start;
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--rule-dark);
+}
+
+.transcript-row.is-astra {
+  border-left: 2.5px solid var(--viridian-bright);
+  padding-left: 1.25rem;
+  background: rgba(51, 179, 142, 0.05);
+}
+
+.transcript-row__model {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: var(--ink-dark);
+}
+
+.transcript-row__meta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-dark-muted);
+  margin-top: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.transcript-row__text {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--ink-dark-2);
+  margin: 0;
+}
+
+.transcript-row.is-astra .transcript-row__text {
+  color: var(--ink-dark);
+  font-size: 1.04rem;
+}
+
+.transcript-row__loop {
+  color: var(--ink-dark-muted);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--vermilion-dark);
+  text-underline-offset: 4px;
+}
+
+.transcript-row__refusal {
+  color: var(--ochre-bright);
+}
+
+.transcript-row__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-align: right;
+}
+
+.tstat__k {
+  color: var(--ink-dark-muted);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+}
+
+.tstat__v {
+  color: var(--ink-dark);
+  font-weight: 600;
+}
+
+.tstat__v--good {
+  color: var(--viridian-bright);
+}
+
+.tstat__v--warn {
+  color: var(--ochre-bright);
+}
+
+/* Confound Ruling 3-Col Hairline Footer inside Darkroom */
+.confounds-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3.5vw, 3.5rem);
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--rule-dark-strong);
+}
+
+.confound__tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+}
+
+.confound__tag--ruled { color: var(--viridian-bright); }
+.confound__tag--open { color: var(--vermilion-dark); }
+
+.confound__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--ink-dark);
+  margin: 0 0 0.65rem 0;
+}
+
+.confound__body {
+  font-size: 0.9rem;
+  color: var(--ink-dark-2);
+  line-height: 1.64;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Section 05: Failure Modes — Verbosity vs Accuracy & Five Voices
+   ========================================================================== */
+.failure-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.scatter-panel {
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding-block: 1.75rem;
+}
+
+.scatter-panel__label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: 1rem;
+}
+
+.voices-roster {
+  border-top: 1px solid var(--rule-strong);
+}
+
+.voice-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 1.25rem;
+  align-items: center;
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition: padding-left 0.2s var(--ease-out), border-color 0.2s;
+}
+
+.voice-item:hover,
+.voice-item.is-active {
+  padding-left: 0.85rem;
+  border-bottom-color: var(--ink);
+}
+
+.voice-item.is-active {
+  border-left: 2.5px solid var(--vermilion);
+}
+
+.voice-item__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+
+.voice-item__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.06rem;
+}
+
+.voice-item__stat {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+}
+
+.voice-item__archetype {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--vermilion);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.28rem;
+}
+
+.voice-item__quote {
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  margin: 0.45rem 0 0 0;
+  line-height: 1.5;
+}
+
+.voice-item__ribbon {
+  width: 120px;
+  height: 44px;
+}
+
+/* ==========================================================================
+   Section 06: Apparatus — Dual Arm Optics, Silent-AAC Preflight & Cost Ledger
+   ========================================================================== */
+.arms-spec {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-top: 2rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.arm-col__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vermilion);
+  margin-bottom: 0.6rem;
+}
+
+.arm-col--native .arm-col__eyebrow {
+  color: var(--ink);
+}
+
+.arm-specs-list {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 0.55rem 1.25rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.86rem;
+}
+
+.arm-specs-list dt {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+
+.arm-specs-list dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.telemetry-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  margin-top: clamp(4rem, 6.5vw, 5.5rem);
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--rule-strong);
+}
+
+.cost-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.cost-total__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.2rem, 3.6vw, 3.1rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.cost-total__sub {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+/* ==========================================================================
+   Section 07: Run 3 Horizon — Cutoff Timeline & 73-Clip Corpus Explorer
+   ========================================================================== */
+.timeline-stage {
+  padding-block: 2rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  margin-top: 2.5rem;
+  margin-bottom: 4rem;
+}
+
+.corpus-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.corpus-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 1rem;
+}
+
+.filter-tab {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-muted);
+  padding-bottom: 0.25rem;
+  transition: color 0.18s;
+}
+
+.filter-tab.is-active,
+.filter-tab:hover {
+  color: var(--ink);
+}
+
+.filter-tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.9rem;
+  height: 2.5px;
+  background: var(--vermilion);
+}
+
+.corpus-search {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  padding: 0.65rem 0;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+  margin-bottom: 1rem;
+}
+
+.corpus-search:focus {
+  border-bottom-color: var(--vermilion);
+}
+
+.corpus-list {
+  max-height: 410px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-strong) transparent;
+}
+
+.corpus-row {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 74px;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.86rem;
+}
+
+.corpus-row__date {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.corpus-row__title {
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.corpus-row__channel {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  margin-top: 0.18rem;
+}
+
+.corpus-row__flag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.flag-cc { color: var(--viridian); }
+.flag-asl { color: var(--ochre); }
+.flag-raw { color: var(--ink-muted); }
+
+/* Closing 4-Step Protocol Row */
+.settle-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2.25rem;
+  margin-top: clamp(4.5rem, 7vw, 6.5rem);
+  padding-top: 3rem;
+  border-top: 1.5px solid var(--ink);
+}
+
+.settle-step__num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--vermilion);
+  letter-spacing: 0.1em;
+}
+
+.settle-step__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin: 0.65rem 0 0.5rem 0;
+  line-height: 1.25;
+}
+
+.settle-step__desc {
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Footer — Crisp Lab Colophon
+   ========================================================================== */
+.footer {
+  background: var(--bg-darkroom);
+  color: var(--ink-dark-2);
+  border-top: 1px solid var(--rule-dark-strong);
+  padding-block: 3.5rem;
+}
+
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer__brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink-dark);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.footer__meta {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-dark-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* ==========================================================================
+   Responsive Design — Clean Adaptation Without Shift
+   ========================================================================== */
+@media (max-width: 1280px) {
+  .brand__ipa {
+    display: none;
+  }
+
+  .topbar__inner {
+    gap: 0.75rem;
+  }
+
+  .topnav {
+    gap: 0.85rem;
+  }
+}
+
+@media (max-width: 1120px) {
+  .topnav {
+    gap: 0.65rem;
+  }
+
+  .topnav__link {
+    font-size: 0.66rem;
+    letter-spacing: 0.03em;
+  }
+
+  .topbar__flatline {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero__grid,
+  .section-head,
+  .viseme-lab,
+  .kinematics-grid,
+  .failure-layout,
+  .arms-spec,
+  .telemetry-split,
+  .corpus-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .articulator__stage {
+    grid-template-columns: 1fr;
+  }
+
+  .mouth-monitor {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding-right: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  .control-proof {
+    border-left: none;
+    border-top: 1px solid var(--rule);
+    padding-left: 0;
+    padding-top: 2rem;
+  }
+
+  .hero-stats,
+  .forensic-nav,
+  .settle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-stat:nth-child(2) {
+    border-right: none;
+  }
+
+  .hero-stat:nth-child(3) {
+    padding-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .hero-stat:nth-child(4) {
+    border-top: 1px solid var(--rule);
+  }
+
+  .transcript-row {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .transcript-row__stats {
+    text-align: left;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .topnav {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero-stats,
+  .caveats-row,
+  .triad-key,
+  .confounds-row,
+  .forensic-nav,
+  .settle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stat,
+  .hero-stat:not(:first-child) {
+    padding: 1.25rem 0;
+    border-right: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  .hero-stat:first-child {
+    border-top: none;
+  }
+
+  .viseme-stage__canvas {
+    grid-template-columns: 1fr;
+  }
+
+  .viseme-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .viseme-btn:nth-child(even) {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .darkroom-plate-captions {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .darkroom-plate-captions__right {
+    text-align: left;
+  }
+
+  .brand__ipa,
+  .topbar__meta {
+    display: none;
+  }
+}
