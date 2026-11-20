@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silent Speech &amp; Visual Phonetics — Emergent Lip-Reading Benchmark</title>
+  <meta name="description" content="An empirical visual-phonetics investigation into whether frontier multimodal LLMs can decode silent speech from lip kinematics alone. Comparing Run 1 (Mar 2026) and Run 2 (Sep 2026) across Gemini, Claude, and GPT-6 Astra." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 24'%3E%3Cpath d='M2 12C7 5.5 13 4 18 7.2C23 4 29 5.5 34 12C29 18.5 23 20 18 16.8C13 20 7 18.5 2 12Z' fill='none' stroke='%23161614' stroke-width='2'/%3E%3Cline x1='2' y1='12' x2='34' y2='12' stroke='%23D94226' stroke-width='1.8'/%3E%3Ccircle cx='18' cy='12' r='2.5' fill='%23147A5E'/%3E%3C/svg%3E" />
+
+  <!-- Geometric Neo-Grotesque + Technical Mono (Strictly Non-Editorial) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ======================================================================
+       ARCHITECTURAL TOP STRIP
+       ====================================================================== -->
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <a href="#top" class="brand" aria-label="Silent Speech — Home">
+        <svg class="brand__mark" viewBox="0 0 36 24" fill="none" aria-hidden="true">
+          <path d="M2 12C7 5.5 13 4 18 7.2C23 4 29 5.5 34 12C29 18.5 23 20 18 16.8C13 20 7 18.5 2 12Z" stroke="currentColor" stroke-width="1.6" />
+          <line x1="2" y1="12" x2="34" y2="12" stroke="#D94226" stroke-width="1.4" />
+          <circle cx="18" cy="12" r="2.2" fill="#147A5E" />
+        </svg>
+        <span class="brand__title">Silent Speech</span>
+        <span class="brand__ipa">/ˈsaɪlənt spiːtʃ/</span>
+      </a>
+
+      <nav class="topnav" aria-label="Primary sections">
+        <a href="#inflection" class="topnav__link">01 Findings</a>
+        <a href="#visemes" class="topnav__link">02 Visemes</a>
+        <a href="#kinematics" class="topnav__link">03 Kinematics</a>
+        <a href="#darkroom" class="topnav__link">04 Decoder</a>
+        <a href="#failures" class="topnav__link">05 Failures</a>
+        <a href="#apparatus" class="topnav__link">06 Apparatus</a>
+        <a href="#horizon" class="topnav__link">07 Run 3</a>
+      </nav>
+
+      <div class="topbar__meta" title="Verified silent audio floor">
+        <span class="topbar__flatline" aria-hidden="true"></span>
+        <span>0.0 dB · 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ====================================================================
+         HERO — OPTICAL PHONETICS & SILENT ARTICULATION LAB
+         ==================================================================== -->
+    <section class="band band--chalk hero">
+      <div class="wrap">
+        <div class="hero__grid">
+          <div class="hero__copy">
+            <p class="eyebrow">
+              <span class="eyebrow__num">00</span>
+              <span class="eyebrow__rule"></span>
+              <span>Visual Phonetics Experiment · Mar → Sep 2026</span>
+            </p>
+            <h1 class="display-hero">
+              Reading Lips<br />
+              in <span class="display-hero__accent">Total Silence.</span>
+            </h1>
+            <p class="hero__ipa">/ˈriːdɪŋ lɪps ɪn ˈtoʊtəl ˈsaɪləns/</p>
+            <p class="lead">
+              In March 2026, five multimodal models failed completely at silent lip-reading. Six months later, at matched 10&nbsp;fps sampling with zero audio signal, <strong>GPT-6 Astra</strong> decoded two of four muted clips — one word-for-word, one differing only by a contraction — overturning the conclusion that visual speech is non-emergent.
+            </p>
+          </div>
+
+          <div class="hero__art">
+            <img
+              src="assets/hero-phonetics.webp"
+              alt="Architectural side-profile illustration of silent speech lip-aperture contours unfolding across five temporal steps above a flat viridian silence baseline"
+              class="plate plate--multiply"
+              width="1200"
+              height="896"
+            />
+            <div class="hero__plate-caption">
+              <span>PLATE 01 · ARTICULATORY ENVELOPE &amp; MUTED CARRIER</span>
+              <span>AAC 371 B / FRAME · 0.0 dB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unboxed 4-Column Architectural Telemetry Strip -->
+        <div class="hero-stats" aria-label="Headline experimental findings">
+          <div class="hero-stat">
+            <div class="hero-stat__value hero-stat__value--viridian">0.00</div>
+            <div class="hero-stat__label">Best 1st-Sentence WER</div>
+            <div class="hero-stat__sub">GPT-6 Astra recovered <em>"Did you feed the dog?"</em> verbatim on clip_4.</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat__value">0.46</div>
+            <div class="hero-stat__label">Astra Avg WER (n=4)</div>
+            <div class="hero-stat__sub">Against 1.30–6.10 across Gemini 3.1 Pro, 3.8 Flash, Opus 5 &amp; Fable 5.1.</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat__value hero-stat__value--vermilion">10 fps</div>
+            <div class="hero-stat__label">Frame-Rate Control</div>
+            <div class="hero-stat__sub">10× higher sampling did not help Gemini 3.1 Pro (0.95 → 1.30 WER).</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat__value">73</div>
+            <div class="hero-stat__label">Post-Cutoff Specimens</div>
+            <div class="hero-stat__sub">Verified clips uploaded ≥ Jun 1, 2026 to isolate contamination in Run 3.</div>
+          </div>
+        </div>
+
+        <!-- Interactive Live Silent Viseme Articulation Instrument -->
+        <div class="articulator" aria-label="Interactive Silent Articulation Instrument">
+          <div class="articulator__bar">
+            <div class="articulator__heading">Interactive Specimen · Silent Lip-Aperture Synth</div>
+            <div class="clip-tabs" id="hero-clip-tabs" role="tablist" aria-label="Select test clip">
+              <!-- Populated by app.js -->
+            </div>
+          </div>
+
+          <div class="articulator__stage">
+            <div class="mouth-monitor">
+              <svg id="live-mouth-svg" viewBox="0 0 260 200" role="img" aria-label="Animated geometric lip aperture contour">
+                <!-- Dynamic kinematic lip geometry rendered by app.js -->
+              </svg>
+              <div class="mouth-monitor__readout">
+                <span id="mouth-viseme-readout">VISEME: ALVEOLAR</span>
+                <span id="mouth-aperture-readout">APERTURE: 14 mm</span>
+              </div>
+            </div>
+
+            <div class="articulator__detail">
+              <p class="articulator__sentence" id="hero-clip-sentence">"Did you feed the dog?"</p>
+              <p class="articulator__ipa-line" id="hero-clip-ipa">/dɪd juː fiːd ðə dɒɡ/</p>
+              <div class="phoneme-rail" id="hero-phoneme-rail" aria-label="Phoneme viseme sequence">
+                <!-- Populated by app.js -->
+              </div>
+              <div class="articulator__controls">
+                <button type="button" class="btn-line" id="btn-play-visemes">
+                  <span id="btn-play-label">Pause Articulation</span>
+                </button>
+                <div class="silence-meter">
+                  <svg width="88" height="16" viewBox="0 0 88 16" fill="none" aria-hidden="true">
+                    <line x1="0" y1="8" x2="88" y2="8" stroke="#147A5E" stroke-width="1.5" />
+                    <circle cx="44" cy="8" r="5" stroke="#147A5E" stroke-width="1.2" fill="#F3F3EE" />
+                    <circle cx="44" cy="8" r="1.8" fill="#147A5E" />
+                  </svg>
+                  <span id="hero-clip-meta">CLIP_4 · 9.0s · 80 FRAMES @ 8.89 EFF. FPS · SILENT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         01 / THE INFLECTION — RUN 1 → RUN 2 & THE METRIC TRAP
+         ==================================================================== -->
+    <section id="inflection" class="band band--pure">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">01</span>
+              <span class="eyebrow__rule"></span>
+              <span>The Inflection Point · Run 1 → Run 2</span>
+            </p>
+            <h2 class="section-title">A sharp break in six months — hidden by raw WER.</h2>
+          </div>
+          <p class="lead">
+            Run 1 (March 2026) ended with every model at or above 0.95 WER. Run 2 (September 19, 2026; 24 calls, $6.70) separated the field: four frontier models still confabulated or refused, while <strong>GPT-6 Astra</strong> locked onto spoken English — then looped, tricking naive error scoring into hiding the win.
+          </p>
+        </div>
+
+        <div class="controls-strip">
+          <div class="segmented" role="group" aria-label="Toggle Word Error Rate scoring mode">
+            <button type="button" class="segmented__btn is-active" id="mode-first-sent" data-wer-mode="first">
+              First-Sentence WER (Fair Read)
+            </button>
+            <button type="button" class="segmented__btn" id="mode-raw" data-wer-mode="raw">
+              Raw Full-Response WER (Run 1 Metric)
+            </button>
+          </div>
+          <p class="metric-note" id="wer-mode-note">
+            Scoring the first sentence isolates decoding accuracy from repetition loops: GPT-6 Astra drops to <strong>0.46 avg WER</strong> (<strong>0.00</strong> on clip_4). Toggle to Raw WER to see how repetition buries it at <strong>1.20</strong>.
+          </p>
+        </div>
+
+        <div class="chart-stage">
+          <svg id="wer-comparison-svg" viewBox="0 0 1120 495" role="img" aria-label="Word Error Rate comparison across Run 1 and Run 2 models">
+            <!-- Rendered dynamically by app.js -->
+          </svg>
+        </div>
+
+        <!-- Run 2 Full Borderless Swiss Ledger -->
+        <div class="ledger-wrap">
+          <div class="ledger-caption">
+            <span class="ledger-caption__title">Run 2 Per-Clip Matrix · First-Sentence WER (2026-09-19)</span>
+            <span class="ledger-caption__meta">LOWER IS BETTER · 0.00 = VERBATIM · AVERAGES OVER ATTEMPTS ONLY</span>
+          </div>
+          <table class="ledger">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>clip_1 (8s)</th>
+                <th>clip_2 (8s)</th>
+                <th>clip_3 (10s)</th>
+                <th>clip_4 (9s)</th>
+                <th>1st-Sent Avg</th>
+                <th>Raw Avg</th>
+                <th>Avg Words</th>
+                <th>Attempts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="is-winner">
+                <td>
+                  GPT-6 Astra
+                  <span class="ledger-subnote">frame_sequence · 80 frames · OpenRouter</span>
+                </td>
+                <td class="val-near">0.60</td>
+                <td class="val-near">0.40</td>
+                <td>0.86</td>
+                <td class="val-exact">0.00</td>
+                <td class="val-exact">0.46</td>
+                <td>1.20</td>
+                <td>9.75</td>
+                <td>4 / 4</td>
+              </tr>
+              <tr>
+                <td>
+                  Gemini 3.1 Pro
+                  <span class="ledger-subnote">native_video · 10 fps HIGH · within-model control</span>
+                </td>
+                <td>1.00</td>
+                <td>2.20</td>
+                <td>1.00</td>
+                <td>1.00</td>
+                <td>1.30</td>
+                <td>1.30</td>
+                <td>7.00</td>
+                <td>4 / 4</td>
+              </tr>
+              <tr>
+                <td>
+                  Gemini 3.8 Flash
+                  <span class="ledger-subnote">native_video · 10 fps HIGH · thinking HIGH</span>
+                </td>
+                <td>4.80</td>
+                <td>2.80</td>
+                <td>0.86</td>
+                <td>3.40</td>
+                <td>2.96</td>
+                <td>3.56</td>
+                <td>18.75</td>
+                <td>4 / 4</td>
+              </tr>
+              <tr>
+                <td>
+                  Claude Opus 5
+                  <span class="ledger-subnote">frame_sequence · 80 frames · OpenRouter</span>
+                </td>
+                <td>3.40</td>
+                <td>4.40</td>
+                <td>3.43</td>
+                <td>5.80</td>
+                <td>4.26</td>
+                <td>17.33</td>
+                <td>94.50</td>
+                <td>4 / 4</td>
+              </tr>
+              <tr>
+                <td>
+                  Claude Fable 5.1
+                  <span class="ledger-subnote">frame_sequence · 80 frames · anthropic/claude-fable-5.1</span>
+                </td>
+                <td>4.80</td>
+                <td>7.40</td>
+                <td class="val-refusal">refusal</td>
+                <td class="val-refusal">refusal</td>
+                <td>6.10</td>
+                <td>6.10</td>
+                <td>31.00</td>
+                <td>2 / 4</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Three Run 1 Audit Caveats Discovered While Preparing Run 2 -->
+        <div class="caveats-row">
+          <div>
+            <div class="caveat__index">Audit Caveat 01 · Muted AAC Track</div>
+            <h3 class="caveat__title">Audio was muted, not stripped</h3>
+            <p class="caveat__body">
+              All four committed MP4s still carried an AAC track. Binary inspection of <code class="mono">stsz</code> boxes verified every audio frame is a flat 371–372 bytes (constant silence), confirming Run 1 results stood — and <code class="mono">run.py</code> now enforces a preflight silence probe before calling any API.
+            </p>
+          </div>
+          <div>
+            <div class="caveat__index">Audit Caveat 02 · Hidden 3 fps Cap</div>
+            <h3 class="caveat__title">MiniCPM never ran at 10 fps</h3>
+            <p class="caveat__body">
+              MiniCPM-o 4.5 was included in Run 1 specifically for 10&nbsp;fps sampling, yet <code class="mono">colab_minicpm.ipynb</code> capped <code class="mono">MAX_FRAMES = 24</code> evenly spaced over 8 seconds (~3&nbsp;fps). The high-frame-rate hypothesis had never actually been tested until Run 2.
+            </p>
+          </div>
+          <div>
+            <div class="caveat__index">Audit Caveat 03 · Refusal Poisoning</div>
+            <h3 class="caveat__title">Scoring refusals broke WER</h3>
+            <p class="caveat__body">
+              Qwen VL Max's Run 1 score of 5.19 measured how wordy its polite refusal was, not lip-reading error. Run 2 classifies every response as <code class="mono">attempt</code>, <code class="mono">refusal</code>, <code class="mono">empty</code>, <code class="mono">truncated</code>, or <code class="mono">error</code>, averaging WER strictly over genuine attempts.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         02 / VISUAL PHONETICS — THE HOMOPHENE AMBIGUITY
+         ==================================================================== -->
+    <section id="visemes" class="band band--chalk">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">02</span>
+              <span class="eyebrow__rule"></span>
+              <span>Visual Phonetics · The Homophene Wall</span>
+            </p>
+            <h2 class="section-title">Forty sounds collapse onto twelve mouth shapes.</h2>
+          </div>
+          <p class="lead">
+            Visual speech is fundamentally under-determined. Roughly 70% of English articulatory contrast happens behind the lips — in vocal-fold voicing, velum opening, and posterior tongue contact. Visually identical phonemes are <strong>homophenes</strong>, and their shared optical geometry is a <strong>viseme</strong>.
+          </p>
+        </div>
+
+        <figure class="plate-feature">
+          <img
+            src="assets/homophene-triad.webp"
+            alt="Three identical sagittal vocal-tract profiles with closed bilabial lips in vermilion, distinguishing voiceless /p/ air burst, voiced /b/ laryngeal vibration in viridian, and nasal /m/ velum airflow in ochre"
+            class="plate plate--multiply"
+            width="1376"
+            height="768"
+          />
+          <figcaption class="triad-key">
+            <div class="triad-col triad-col--p">
+              <div class="triad-col__ipa">/p/</div>
+              <div class="triad-col__name">Voiceless Bilabial Plosive · "pat"</div>
+              <p class="triad-col__desc">Lips seal completely, intra-oral pressure builds, then releases as an unvoiced puff of air. Vocal folds stay open and still.</p>
+            </div>
+            <div class="triad-col triad-col--b">
+              <div class="triad-col__ipa">/b/</div>
+              <div class="triad-col__name">Voiced Bilabial Plosive · "bat"</div>
+              <p class="triad-col__desc">Identical exterior lip seal — but hidden inside the larynx, the vocal folds vibrate continuously before release. Invisible to a camera.</p>
+            </div>
+            <div class="triad-col triad-col--m">
+              <div class="triad-col__ipa">/m/</div>
+              <div class="triad-col__name">Bilabial Nasal · "mat"</div>
+              <p class="triad-col__desc">Identical exterior lip seal again — while the soft palate lowers internally to route voiced airflow out through the nasal cavity.</p>
+            </div>
+          </figcaption>
+        </figure>
+
+        <!-- Interactive 6-Class Viseme Atlas -->
+        <div class="viseme-lab">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">02.B</span>
+              <span class="eyebrow__rule"></span>
+              <span>Interactive Viseme Geometry</span>
+            </p>
+            <h3 class="subsection-title">Explore the six primary visual classes</h3>
+            <p class="prose">
+              Select a viseme class to inspect its front-plane optical contour, collapsed phoneme group, and where it surfaced inside our Run 2 transcripts.
+            </p>
+
+            <div class="viseme-selector" id="viseme-selector" role="tablist" aria-label="Viseme classes">
+              <!-- Populated by app.js -->
+            </div>
+
+            <blockquote class="fable-quote">
+              “Lip reading from still images isn't reliable — the visual mouth shapes are ambiguous and many different sounds look identical (e.g., ‘p,’ ‘b,’ and ‘m’). Without audio, any transcript I gave would be a guess rather than a genuine reading.”
+              <cite>— Claude Fable 5.1 · Refusal on clip_3 &amp; clip_4</cite>
+            </blockquote>
+          </div>
+
+          <div class="viseme-stage">
+            <div class="viseme-stage__canvas">
+              <svg id="viseme-detail-svg" viewBox="0 0 240 200" role="img" aria-label="Detailed geometric viseme lip shape diagram">
+                <!-- Dynamic SVG rendered by app.js -->
+              </svg>
+              <div>
+                <div class="eyebrow" style="margin-bottom: 0.65rem;">
+                  <span class="eyebrow__num" id="viseme-code">V-01</span>
+                  <span id="viseme-family">BILABIAL CLOSURE</span>
+                </div>
+                <h4 class="subsection-title" id="viseme-ipa-big" style="font-size: 2rem; margin-bottom: 0.5rem;">/p/ · /b/ · /m/</h4>
+                <p class="prose" id="viseme-desc" style="font-size: 0.92rem;">
+                  Full horizontal lip compression with zero visible dentition or inner cavity.
+                </p>
+              </div>
+            </div>
+
+            <div class="viseme-stage__meta">
+              <div>
+                <div class="meta-datum__k">Homophene Example Set</div>
+                <div class="meta-datum__v" id="viseme-examples">pat / bat / mat · pay / bay / may</div>
+              </div>
+              <div>
+                <div class="meta-datum__k">Visible Aperture &amp; Cues</div>
+                <div class="meta-datum__v" id="viseme-cues">0 mm gap · Upper/lower lip press</div>
+              </div>
+              <div>
+                <div class="meta-datum__k">Hidden Articulators</div>
+                <div class="meta-datum__v" id="viseme-hidden">Laryngeal voicing · Velum nasal port</div>
+              </div>
+              <div>
+                <div class="meta-datum__k">Signal in Run 2 Clips</div>
+                <div class="meta-datum__v" id="viseme-run2">clip_2 ("warm", "morning") · Cited by Fable</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         03 / TEMPORAL KINEMATICS — THE FRAME-RATE HYPOTHESIS DISCONFIRMED
+         ==================================================================== -->
+    <section id="kinematics" class="band band--pure">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">03</span>
+              <span class="eyebrow__rule"></span>
+              <span>Temporal Kinematics · Within-Model Control</span>
+            </p>
+            <h2 class="section-title">Ten times the frame rate changed nothing.</h2>
+          </div>
+          <p class="lead">
+            Run 1's cleanest explanation for failure was temporal aliasing: human visemes turn over at 10–15 per second while Gemini sampled native video at ~1&nbsp;fps. Run 2 tested that directly — and disconfirmed it.
+          </p>
+        </div>
+
+        <div class="shutter-plate-wrap">
+          <div class="shutter-plate-labels">
+            <span>UPPER TRACK: RUN 1 SPARSE APERTURE (~1 FPS · ~741 TOKENS / CLIP)</span>
+            <span>LOWER TRACK: RUN 2 CONTINUOUS KINEMATICS (10 FPS HIGH · 21K–27K TOKENS / CLIP)</span>
+          </div>
+          <img
+            src="assets/shutter-kinematics.webp"
+            alt="Two parallel horizontal filmstrip timelines comparing sparse 1fps aperture sampling on top against dense 10fps lip articulation contours linked by a continuous viridian aperture curve below"
+            class="plate plate--multiply"
+            width="1376"
+            height="768"
+          />
+        </div>
+
+        <div class="kinematics-grid">
+          <div>
+            <div class="controls-strip" style="margin-bottom: 1rem;">
+              <div>
+                <h3 class="subsection-title" style="margin-bottom: 0.25rem;">Interactive Shutter-Slit Sampler</h3>
+                <p class="prose" style="font-size: 0.9rem;">
+                  Toggle sampling density over clip_4's articulatory wave (<em>"Did you feed the dog?"</em>). Even when Gemini captures every lip transition cleanly at 10&nbsp;fps, decoding still fails.
+                </p>
+              </div>
+              <div class="segmented" role="group" aria-label="Select frame rate sampling">
+                <button type="button" class="segmented__btn" id="fps-btn-1" data-fps="1">1 fps · Run 1</button>
+                <button type="button" class="segmented__btn is-active" id="fps-btn-10" data-fps="10">10 fps · Run 2</button>
+              </div>
+            </div>
+
+            <div class="shutter-svg-box">
+              <svg id="shutter-sim-svg" viewBox="0 0 680 230" role="img" aria-label="Interactive lip aperture waveform with sampling shutter ticks">
+                <!-- Rendered by app.js -->
+              </svg>
+            </div>
+            <p class="mono" id="shutter-caption" style="font-size: 0.74rem; color: var(--ink-muted); margin-top: 0.85rem;">
+              10 FPS SAMPLING · 80 CAPTURED FRAMES · ~24,047 PROMPT TOKENS (GEMINI HIGH RES) · CAPTURES EVERY PHONEME PEAK
+            </p>
+          </div>
+
+          <aside class="control-proof" aria-label="Matched frame-rate control outcomes">
+            <div class="control-row">
+              <div class="control-row__model">Within-Model Control · gemini-3.1-pro-preview</div>
+              <div class="control-row__delta">
+                <span>0.95</span>
+                <span class="control-row__arrow">→</span>
+                <span style="color: var(--vermilion);">1.30 WER</span>
+              </div>
+              <p class="control-row__note">
+                Exact same model ID across Run 1 (1&nbsp;fps default) and Run 2 (10&nbsp;fps, <code class="mono">media_resolution=HIGH</code>, <code class="mono">STATIC</code>, thinking <code class="mono">HIGH</code> — roughly 3× per-frame token resolution and ~30× total video tokens per clip). Zero improvement.
+              </p>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row__model">Cross-Model Match · GPT-6 Astra @ 10 fps</div>
+              <div class="control-row__delta">
+                <span style="color: var(--viridian);">0.46 Avg</span>
+                <span class="control-row__arrow">·</span>
+                <span style="color: var(--viridian);">0.00 Best</span>
+              </div>
+              <p class="control-row__note">
+                Succeeded at the <em>identical</em> 10&nbsp;fps rate (80 frames) where Gemini 3.1 Pro, Gemini 3.8 Flash, Claude Opus 5, and Claude Fable 5.1 all failed.
+              </p>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row__model">Conclusion</div>
+              <p class="control-row__note" style="margin-top: 0.35rem; color: var(--ink); font-weight: 500;">
+                Sampling rate was never the binding constraint. At matched temporal resolution, the gap is purely a capability boundary between models.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         04 / THE SILENT DARKROOM — FORENSIC RESPONSE DECODER
+         ==================================================================== -->
+    <section id="darkroom" class="band band--darkroom">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">04</span>
+              <span class="eyebrow__rule"></span>
+              <span>The Silent Darkroom · Forensic Alignment</span>
+            </p>
+            <h2 class="section-title">What GPT-6 Astra read — and what everyone else invented.</h2>
+          </div>
+          <p class="lead">
+            Inspect every single Run 2 transcript word-for-word. Notice how Astra's exact match loops cleanly on a tight cadence, while its misses preserve labial and alveolar visual structure — unlike peers that spin fluent fictional monologues.
+          </p>
+        </div>
+
+        <div class="darkroom-plate-wrap">
+          <img
+            src="assets/confabulation-darkroom.webp"
+            alt="High-contrast darkroom illustration contrasting a tight repeating viridian decoding pulse on the left against an overflowing tangle of stone and ochre confabulation ribbons on the right"
+            class="plate"
+            width="1376"
+            height="768"
+          />
+          <div class="darkroom-plate-captions">
+            <span class="darkroom-plate-captions__left">← GPT-6 ASTRA · TIGHT PHONETIC LOCK + REPETITION PULSE (9.75 WORDS AVG)</span>
+            <span class="darkroom-plate-captions__right">CLAUDE OPUS 5 · UNHEDGED INFLUENCER CONFABULATION (94.5 WORDS AVG) →</span>
+          </div>
+        </div>
+
+        <!-- Clip Selector Tabs -->
+        <div class="forensic-nav" id="forensic-clip-nav" role="tablist" aria-label="Select clip for forensic transcript comparison">
+          <!-- Populated by app.js -->
+        </div>
+
+        <!-- Word-by-Word Viseme Alignment Tape -->
+        <div class="alignment-stage">
+          <div class="alignment-header">
+            <div>
+              <h3 class="alignment-gt" id="forensic-gt">"Did you feed the dog?"</h3>
+              <div class="alignment-ipa" id="forensic-ipa">/dɪd juː fiːd ðə dɒɡ/</div>
+            </div>
+            <div class="alignment-verdict" id="forensic-verdict">
+              EXACT VERBATIM MATCH · 1ST-SENT WER 0.00
+              <span>RAW WER 1.60 DUE TO REPETITION ECHO LOOP</span>
+            </div>
+          </div>
+
+          <div class="alignment-svg-wrap">
+            <svg id="forensic-align-svg" viewBox="0 0 1080 185" role="img" aria-label="Word-by-word viseme alignment between ground truth and GPT-6 Astra">
+              <!-- Populated by app.js -->
+            </svg>
+          </div>
+
+          <p class="alignment-note" id="forensic-note"></p>
+        </div>
+
+        <!-- All 5 Verbatim Model Transcripts for Active Clip -->
+        <div class="transcript-list" id="forensic-transcripts">
+          <!-- Populated by app.js -->
+        </div>
+
+        <!-- Three-Column Confound Ruling -->
+        <div class="confounds-row">
+          <div>
+            <div class="confound__tag confound__tag--ruled">Ruled Out · 01</div>
+            <h3 class="confound__title">Not audio leakage</h3>
+            <p class="confound__body">
+              The frame-sequence arm decodes video to standalone JPEGs with OpenCV and transmits images only. There is no audio channel anywhere in the request payload — nothing exists to transcribe.
+            </p>
+          </div>
+          <div>
+            <div class="confound__tag confound__tag--ruled">Ruled Out · 02</div>
+            <h3 class="confound__title">Not burned-in captions</h3>
+            <p class="confound__body">
+              Raw frames from clip_2 and clip_4 were visually inspected directly: a single speaker framed against a sunroom window with zero text overlay, subtitles, or prompt cards anywhere in frame.
+            </p>
+          </div>
+          <div>
+            <div class="confound__tag confound__tag--open">Open Confound · 03</div>
+            <h3 class="confound__title">Training-data contamination</h3>
+            <p class="confound__body">
+              All four clips originate from one 2025-09-26 YouTube compilation (<em>ReadMyLipsbyCynthia</em>). Yet a memorizing model should ace all four; Astra missed clip_3 after locking <em>"I('d) like"</em> and paraphrased clip_1 visually — the signature of viseme confusion. Strong evidence, not proof.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         05 / TAXONOMY OF FAILURE — FIVE VOICES IN SILENCE
+         ==================================================================== -->
+    <section id="failures" class="band band--chalk">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">05</span>
+              <span class="eyebrow__rule"></span>
+              <span>Behavioral Taxonomy · Five Voices in Silence</span>
+            </p>
+            <h2 class="section-title">When speech goes mute, each model invents a different persona.</h2>
+          </div>
+          <p class="lead">
+            Failure on silent video is not uniform noise. Every frontier architecture falls back on a strikingly consistent prior — from Gemini 3.8 Flash inventing a monologue about the background sunroom window, to Claude Opus 5 writing 95-word TikTok confessionals for 8-second clips.
+          </p>
+        </div>
+
+        <div class="failure-layout">
+          <div class="scatter-panel">
+            <div class="scatter-panel__label">
+              <span>VERBOSITY (AVG WORDS) × FIRST-SENTENCE WER</span>
+              <span>SELECT A MODEL TO INSPECT CADENCE</span>
+            </div>
+            <svg id="failure-scatter-svg" viewBox="0 0 600 410" role="img" aria-label="Scatter chart plotting average response words against first-sentence WER for all five models">
+              <!-- Populated by app.js -->
+            </svg>
+          </div>
+
+          <div class="voices-roster" id="voices-roster">
+            <!-- Populated by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         06 / APPARATUS — DUAL ARM OPTICS, PREFLIGHT & COST LEDGER
+         ==================================================================== -->
+    <section id="apparatus" class="band band--pure">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">06</span>
+              <span class="eyebrow__rule"></span>
+              <span>Experimental Apparatus · Harness &amp; Economics</span>
+            </p>
+            <h2 class="section-title">Two optical pathways, verified silence, $6.70 total spend.</h2>
+          </div>
+          <p class="lead">
+            Only Gemini ingests native video; Claude and GPT-6 Astra accept image sequences only. The rebuilt Run 2 harness standardizes both arms at 10&nbsp;fps, prevents silent gateway downgrades, and audits every container byte before a single call is placed.
+          </p>
+        </div>
+
+        <figure class="plate-feature">
+          <img
+            src="assets/dual-arm-optics.webp"
+            alt="Technical optical diagram showing a single silent lip-reading source splitting into an unbroken native video ribbon through a prism above and discrete isometric JPEG frame plates with vermilion corner marks below"
+            class="plate plate--multiply"
+            width="1376"
+            height="768"
+          />
+        </figure>
+
+        <div class="arms-spec">
+          <div class="arm-col arm-col--native">
+            <div class="arm-col__eyebrow">Upper Path · native_video (Google GenAI SDK)</div>
+            <h3 class="subsection-title">Gemini 3.8 Flash &amp; Gemini 3.1 Pro</h3>
+            <p class="prose">
+              Always routed directly through the GenAI SDK — never OpenRouter. While OpenRouter carries <code class="mono">processing: "static" | "agentic"</code>, it silently drops <code class="mono">videoMetadata.fps</code> and <code class="mono">media_resolution</code> without erroring, which would secretly downgrade a 10&nbsp;fps test to 1&nbsp;fps while logging 10&nbsp;fps.
+            </p>
+            <dl class="arm-specs-list">
+              <dt>Media Mode</dt>
+              <dd><code class="mono">media_processing = STATIC</code> (blocks agentic 88% token skipping)</dd>
+              <dt>Resolution</dt>
+              <dd><code class="mono">media_resolution = HIGH</code> on <code class="mono">GenerateContentConfig</code></dd>
+              <dt>Reasoning</dt>
+              <dd><code class="mono">thinking_level = HIGH</code> (16,000 max output tokens)</dd>
+              <dt>Live ID Fix</dt>
+              <dd><code class="mono">gemini-3.1-pro</code> 404s; <code class="mono">gemini-3.1-pro-preview</code> is live</dd>
+            </dl>
+          </div>
+
+          <div class="arm-col">
+            <div class="arm-col__eyebrow">Lower Path · frame_sequence (OpenCV → OpenRouter / Direct)</div>
+            <h3 class="subsection-title">Claude Opus 5, Fable 5.1 &amp; GPT-6 Astra</h3>
+            <p class="prose">
+              Decoded locally via OpenCV into discrete frames, holding visual input strictly identical across Anthropic and OpenAI arms so capability differences cannot be blamed on provider video encoders. Server-side refusal fallbacks are deliberately disabled to prevent cross-model contamination.
+            </p>
+            <dl class="arm-specs-list">
+              <dt>Sampling Cap</dt>
+              <dd>10&nbsp;fps capped at <code class="mono">80 frames</code> (10.0 / 10.0 / 8.0 / 8.89 eff. fps)</dd>
+              <dt>Frame Geometry</dt>
+              <dd><code class="mono">576 × 1024 px</code> · JPEG Q80 (~8 MB base64 payload)</dd>
+              <dt>Safety Coding</dt>
+              <dd><code class="mono">stop_reason = "refusal"</code> logged as refusal, never blank</dd>
+              <dt>OpenRouter ID</dt>
+              <dd>Fable resolves as <code class="mono">anthropic/claude-fable-5.1</code> (dot)</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Telemetry Split: MP4 Silence Forensics + Cost/Token Ledger -->
+        <div class="telemetry-split">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">06.A</span>
+              <span class="eyebrow__rule"></span>
+              <span>Binary Preflight · MP4 stsz Audit</span>
+            </p>
+            <h3 class="subsection-title">Constant 371-byte frames prove acoustic silence</h3>
+            <p class="prose" style="margin-bottom: 1.5rem;">
+              Real speech compresses into wildly fluctuating AAC frame byte lengths. Every committed test clip exhibits a perfectly flat 371–372 byte <code class="mono">stsz</code> signature from start to finish — verified programmatically without even calling <code class="mono">ffmpeg</code>.
+            </p>
+            <svg id="aac-preflight-svg" viewBox="0 0 520 190" role="img" aria-label="AAC byte-size variance comparison between spoken audio and constant 371-byte silent track">
+              <!-- Populated by app.js -->
+            </svg>
+            <p class="prose" style="margin-top: 1.25rem; font-size: 0.88rem; color: var(--ink-muted);">
+              A parallel cross-modal retrieval script (<code class="mono">run_embeddings.py</code>, updated to GA <code class="mono">gemini-embedding-2</code>) also probes whether video embeddings implicitly encode spoken keywords like <em>"dog"</em> or <em>"vacation"</em> even when generative decoders fail.
+            </p>
+          </div>
+
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">06.B</span>
+              <span class="eyebrow__rule"></span>
+              <span>Run 2 Economics &amp; Token Footprint</span>
+            </p>
+            <div class="cost-total">
+              <div>
+                <div class="cost-total__num">$6.70</div>
+                <div class="mono" style="font-size: 0.72rem; color: var(--ink-muted); margin-top: 0.3rem;">ACTUAL SPEND · 24 API CALLS (EST. $8–$12)</div>
+              </div>
+              <div class="cost-total__sub">
+                908,738 INPUT TOKENS<br />
+                73,344 OUTPUT + THINKING TOKENS
+              </div>
+            </div>
+            <svg id="cost-ledger-svg" viewBox="0 0 560 275" role="img" aria-label="Horizontal token and cost breakdown across all five models in Run 2">
+              <!-- Populated by app.js -->
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         07 / RUN 3 HORIZON — CONTAMINATION CONTROL & 73 POST-CUTOFF CLIPS
+         ==================================================================== -->
+    <section id="horizon" class="band band--chalk">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">07</span>
+              <span class="eyebrow__rule"></span>
+              <span>Run 3 Horizon · Contamination Control</span>
+            </p>
+            <h2 class="section-title">73 verified clips uploaded past the training wall.</h2>
+          </div>
+          <p class="lead">
+            Because Run 1's clips came from a September 2025 YouTube compilation, memorization cannot be ruled out completely. To prepare Run 3, 73 single-speaker English clips (3–25s) were harvested and re-verified against <code class="mono">yt-dlp</code> on September 19, 2026 — every single one uploaded on or after <strong>June 1, 2026</strong>.
+          </p>
+        </div>
+
+        <figure class="plate-feature">
+          <img
+            src="assets/post-cutoff-horizon.webp"
+            alt="Architectural chronology illustration showing one film reel and four identical clips crossing a sharp vertical vermilion training-cutoff horizon into a fan of diverse speaker silhouettes and muted camera shutters"
+            class="plate plate--multiply"
+            width="1376"
+            height="768"
+          />
+        </figure>
+
+        <!-- Interactive Training Cutoff Timeline SVG -->
+        <div class="timeline-stage">
+          <svg id="cutoff-timeline-svg" viewBox="0 0 1120 205" role="img" aria-label="Chronological training cutoff horizon from September 2025 through September 2026">
+            <!-- Populated by app.js -->
+          </svg>
+        </div>
+
+        <!-- 73-Clip Corpus Concentration + Filterable Specimen Explorer -->
+        <div class="corpus-grid">
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">07.A</span>
+              <span class="eyebrow__rule"></span>
+              <span>Speaker Concentration · 20 Channels</span>
+            </p>
+            <h3 class="subsection-title">Not 73 independent speakers</h3>
+            <p class="prose" style="margin-bottom: 1.5rem;">
+              The top two channels — <em>Megija Liva | Speech Therapy</em> (18) and <em>Sign &amp; Wander</em> (12) — supply 30 of 73 rows. Sixteen clips come from ASL channels requiring manual frame screening for burned-in vocabulary cards, and 38 carry auto-captions needing spot-checks.
+            </p>
+            <svg id="channel-bars-svg" viewBox="0 0 460 365" role="img" aria-label="Horizontal bar chart of top candidate channels showing speaker concentration">
+              <!-- Populated by app.js -->
+            </svg>
+          </div>
+
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow__num">07.B</span>
+              <span class="eyebrow__rule"></span>
+              <span>Verified Candidate Index · candidates.tsv</span>
+            </p>
+            <div class="corpus-filters" id="corpus-filters" role="tablist" aria-label="Filter candidate clips">
+              <button type="button" class="filter-tab is-active" data-filter="all">All (73)</button>
+              <button type="button" class="filter-tab" data-filter="captioned">Auto-Captioned (38)</button>
+              <button type="button" class="filter-tab" data-filter="speech">Speech / ESL (57)</button>
+              <button type="button" class="filter-tab" data-filter="asl">ASL Audit Flag (16)</button>
+            </div>
+            <input
+              type="search"
+              id="corpus-search"
+              class="corpus-search"
+              placeholder="Filter by channel, title, or YouTube ID..."
+              aria-label="Filter candidate clips"
+            />
+            <div class="corpus-list" id="corpus-list">
+              <!-- Populated by app.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Closing Four-Step Protocol: What Would Settle It -->
+        <div class="settle-grid" aria-label="What would settle emergent lip-reading conclusively">
+          <div>
+            <div class="settle-step__num">PROTOCOL 01</div>
+            <h3 class="settle-step__title">Record a brand-new unseen clip</h3>
+            <p class="settle-step__desc">
+              A clip filmed today cannot sit inside any model's training weights — eliminating the last confound for GPT-6 Astra, whose training cutoff remains unpublished.
+            </p>
+          </div>
+          <div>
+            <div class="settle-step__num">PROTOCOL 02</div>
+            <h3 class="settle-step__title">Scale beyond n = 4 clips</h3>
+            <p class="settle-step__desc">
+              Two wins on four clips is a sharp signal, not a calibrated accuracy rate. Screening the 73-clip pool for burned-in text builds a multi-speaker benchmark.
+            </p>
+          </div>
+          <div>
+            <div class="settle-step__num">PROTOCOL 03</div>
+            <h3 class="settle-step__title">Run the describe positive control</h3>
+            <p class="settle-step__desc">
+              Execute <code class="mono">uv run run.py --task describe</code> across the Run 2 lineup to verify every failing arm sees speaker movement cleanly.
+            </p>
+          </div>
+          <div>
+            <div class="settle-step__num">PROTOCOL 04</div>
+            <h3 class="settle-step__title">Sweep fps on GPT-6 Astra</h3>
+            <p class="settle-step__desc">
+              Run <code class="mono">--sweep 1,5,10,30</code> on Astra: testing whether its 10&nbsp;fps accuracy collapses at 1&nbsp;fps isolates how frame rate acts once lip-reading exists.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <div>
+        <div class="footer__brand">Silent Speech · Visual Phonetics Archive</div>
+        <div class="mono" style="font-size: 0.72rem; color: var(--ink-dark-muted); margin-top: 0.35rem;">
+          /ˈsaɪlənt spiːtʃ/ · Emergent Lip-Reading Evaluation Across Multimodal Frontier Models
+        </div>
+      </div>
+      <div class="footer__meta">
+        <span>REPO: david-saint/lip-reading-emergent</span>
+        <span>RUN 1: 2026-03</span>
+        <span>RUN 2: 2026-09-19</span>
+        <span>DATA: summary.json · findings.md · candidates.tsv</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
